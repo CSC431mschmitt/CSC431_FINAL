@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-// Created by Massimo Di Pierro in Python - Adapted to C# by Mike Schmitt for CSC431.
+// Created by Massimo Di Pierro in Python - Adapted to C# by Christin Mirabelli and Mike Schmitt for CSC431.
 
 namespace CSC431_Final_Project
 {
@@ -23,6 +23,8 @@ namespace CSC431_Final_Project
          */
         public Matrix(/*rows=1,cols=1,fill=0.0,optimize=False*/)
         {
+            int rows, columns;
+            double fill;
 
      /* def __init__(self,rows=1,cols=1,fill=0.0,optimize=False):
         """
