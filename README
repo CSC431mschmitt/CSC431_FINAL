@@ -1,24 +1,30 @@
-Purpose: 		This is the CSC431 final project.
+Purpose: 		
 
-Collaborators:	Christin Mirabelli
-				Michael Schmitt
+			This is the CSC431 final project.
+			
+Collaborators:	
+
+			Christin Mirabelli
+			Michael Schmitt
 				
-Overview:		Due Mar 17, 2012
+Overview:		
 
-				Rewrite all the algorithms seen in class in C++, java, C#, D, Go, Javascript,
-				Scala, Haskell, Erlang, or Clojure, including tests (not including functions
-				that require data downloading, assume loading data from CSV File). The
-				algorithms should include proper documentation strings explaining the pur-
-				pose of the algorithm, the input and the output, and possible exceptions. It
-				is not necessary to explain how the algorithm works. (30 points)
-				You MUST use a version control system like GIT or Mercurial and make
-				your code publicly available. Your code MUST be released under the BSD
-				license. I will check your commit history.
+			Due Mar 17, 2012
 
-				By February 6, 2012 you must have chosen the language and provide a
-				working implementation of the Linear Algebra algorithms and a link to the
-				code repository (I recommend GitHub). (10 points)
+			Rewrite all the algorithms seen in class in C++, java, C#, D, Go, Javascript,
+			Scala, Haskell, Erlang, or Clojure, including tests (not including functions
+			that require data downloading, assume loading data from CSV File). The
+			algorithms should include proper documentation strings explaining the pur-
+			pose of the algorithm, the input and the output, and possible exceptions. It
+			is not necessary to explain how the algorithm works. (30 points)
+			You MUST use a version control system like GIT or Mercurial and make
+			your code publicly available. Your code MUST be released under the BSD
+			license. I will check your commit history.
 
-				For the Final project you can work in groups of 2 or 3 students but you
-				have to Finalize your groups by February 6 and must include a report about
-				the roles of each member of the group.
+			By February 6, 2012 you must have chosen the language and provide a
+			working implementation of the Linear Algebra algorithms and a link to the
+			code repository (I recommend GitHub). (10 points)
+
+			For the Final project you can work in groups of 2 or 3 students but you
+			have to Finalize your groups by February 6 and must include a report about
+			the roles of each member of the group.
