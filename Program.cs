@@ -19,6 +19,8 @@ namespace CSC431_Final_Project
             Matrix m3 = new Matrix(3, 3, 4.5);
             Matrix m4 = new Matrix(6, 2, 7);
             Matrix m5 = new Identity(3, 4, 7); 
+            double[] v = new double[] {4, 3, 2, 1};
+            Matrix m6 = new Diagonal(v);
 
             //Console.WriteLine("Definition is Matrix(4, 3): " + m1);
             //Console.WriteLine("\nDefinition is Matrix(): " + m2);
@@ -30,6 +32,7 @@ namespace CSC431_Final_Project
 
             //Console.WriteLine(m1*m3);
             //Console.WriteLine(m1*m2);
+            Console.WriteLine(m6);
 
             Console.ReadLine();
         }
@@ -68,6 +71,32 @@ namespace CSC431_Final_Project
                         data[i, j] = one;
                     else
                         data[i, j] = fill;
+                }
+            }
+        }
+    }
+
+    class Diagonal : Matrix
+    {
+        /* Constructor: Diagonal 
+         * Purpose: Constructs an n x n Matrix with the i-th diagonal element equal to the i-th value of the passed array.
+         *          Inherits from the Matrix class.
+         * Parameters:  d - array of elements to populate in diagonal elements of Matrix. M[i, i] = d[i]
+         */
+        public Diagonal(double[] d)
+        {
+            this.rows = d.Length;
+            this.cols = d.Length;
+            data = new double[rows, cols];
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (i == j)
+                        data[i, j] = d[i];
+                    else
+                        data[i, j] = 0.0;
                 }
             }
         }
