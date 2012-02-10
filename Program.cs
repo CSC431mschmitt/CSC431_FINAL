@@ -14,15 +14,20 @@ namespace CSC431_Final_Project
         {
             //Numeric n = new Numeric();
             
-            Matrix m1 = new Matrix(4, 3);
+            Matrix m1 = new Matrix(4, 3, 2);
             Matrix m2 = new Matrix();
             Matrix m3 = new Matrix(3, 3, 4.5);
             Matrix m4 = new Matrix(6, 2, 7);
 
             Console.WriteLine("Definition is Matrix(4, 3): " + m1);
-            Console.WriteLine("\nDefinition is Matrix(): " + m2);
+            //Console.WriteLine("\nDefinition is Matrix(): " + m2);
             Console.WriteLine("\nDefinition is Matrix(3, 3, 4.5): " + m3);
-            Console.WriteLine("\nDefinition is Matrix(6, 2, 7): " + m4);
+            //Console.WriteLine("\nDefinition is Matrix(6, 2, 7): " + m4);
+            //m4.setElement(1, 1, 2222);
+            Console.WriteLine(m1*m3);
+
+            //Console.WriteLine(m1*m3);
+            //Console.WriteLine(m1*m2);
 
             Console.ReadLine();
         }
@@ -42,8 +47,8 @@ namespace CSC431_Final_Project
     class Matrix
     {
         /* ??? should these be public or private ??? */
-        private int rows, cols;
-        double[,] data; /* ??? Does this need to be type Object ??? */
+        public int rows, cols;
+        public double[,] data; /* ??? Does this need to be type Object ??? */
         //private double fill;
 
         /* Constructor: Matrix
@@ -61,6 +66,9 @@ namespace CSC431_Final_Project
                 for (int j = 0; j < cols; j++)
                     data[i, j] = fill;
         }
+
+        public void setElement(int i, int j, double value) { data[i, j] = value; }
+        public double getElement(int i, int j) { Console.WriteLine(i + ", " + j);  return data[i, j]; }
 
         /* Override: ToString
          * Purpose: Prints out the full string of a Matrix in a readable row by row format.
@@ -210,25 +218,39 @@ namespace CSC431_Final_Project
             for c in xrange(M.cols):
                  M[r,c] *= x
         return M
+      */
 
-    def __mul__(A,B):
-        "multiplies a number of matrix A by another matrix B"
-        if isinstance(B,(list,tuple)):
-            return (A*Matrix(len(B),1,fill=lambda r,c:B[r])).data
-        elif not isinstance(B,Matrix):
-            return B*A
-        elif A.cols == 1 and B.cols==1 and A.rows == B.rows:
-            # try a scalar product ;-)
-            return sum(A[r,0]*B[r,0] for r in xrange(A.rows))
-        elif A.cols!=B.rows:
-            raise ArithmeticError, "incompatible dimensions"
-        M = Matrix(A.rows,B.cols)
-        for r in xrange(A.rows):
-            for c in xrange(B.cols):
-                for k in xrange(A.cols):
-                    M[r,c] += A[r,k]*B[k,c]
-        return M
+        /* Override: Multiplication (*)
+         * Purpose: Multiply two matrices A and B together to return matrix M. M[i,j] = A_i1*B_1j + A_i2*B_2j + ... + A_in*B_nj.
+         *          Exception will thrown if number of columns of matrix A does not equal the number of rows in matrix B.
+         * Parameters: A - First matrix operand.
+         *             B - Second matrix operand.
+         * Returns: Resulting matrix of the matrix multiplication.
+         */
+        public static Matrix operator *(Matrix A, Matrix B)
+        {
+            try
+            {
+                var ex = new InvalidOperationException("Incompatible Dimensions: Matrix A.cols != Matrix B.rows"); 
+                
+                if (A.cols != B.rows) { throw ex; }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
+            Matrix M = new Matrix(A.rows, B.cols);
+        
+            for (int r = 0; r < A.rows; r++)
+                for (int c = 0; c < B.cols; c++)
+                    for (int k = 0; k < A.cols; k++)
+                        M.setElement(r, c, M.getElement(r, c) + (A.getElement(r, k) * B.getElement(k, c)));
+
+            return M;
+        }
+        
+/*
     def __rdiv__(A,x):
         """Computes x/A using Gauss-Jordan elimination where x is a scalar"""
         import copy
