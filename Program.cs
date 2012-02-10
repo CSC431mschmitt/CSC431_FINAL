@@ -7,24 +7,150 @@ using System.Text;
 
 namespace CSC431_Final_Project
 {
+    class Program
+    {
+        /* This will be for running tests. */
+        static void Main(string[] args)
+        {
+            //Numeric n = new Numeric();
+            
+            Matrix m1 = new Matrix(4, 3, 2);
+            Matrix m2 = new Matrix();
+            Matrix m3 = new Matrix(3, 3, 4.5);
+            Matrix m4 = new Matrix(6, 2, 7);
+            Matrix m5 = new Identity(3, 4, 7); 
+            double[] v = new double[] {4, 3, 2, 1};
+            Matrix m6 = new Diagonal(v);
+
+            //Console.WriteLine("Definition is Matrix(4, 3): " + m1);
+            //Console.WriteLine("\nDefinition is Matrix(): " + m2);
+            //Console.WriteLine("\nDefinition is Matrix(3, 3, 4.5): " + m3);
+            //Console.WriteLine("\nDefinition is Matrix(6, 2, 7): " + m4);
+            //m4.setElement(1, 1, 2222);
+            //Console.WriteLine(m1*m3);
+            //Console.WriteLine(m5);
+
+            //Console.WriteLine(m1*m3);
+            //Console.WriteLine(m1*m2);
+            Console.WriteLine(m6);
+
+            Console.ReadLine();
+        }
+    }
 
     class Function
     {
+        public String full_function { get; set; }
 
+        public Function(String full_function)
+        {
+            this.full_function = full_function;
+        }
     }
 
+    class Identity : Matrix
+    {
+        /* Constructor: Identity 
+         * Purpose: Constructs an n x n Matrix with the diagonal elements equal to the same value.  All non-diagonal elements are equal as well.
+         *          Inherits from the Matrix class.
+         * Parameters:  rows - the integer number of rows and columns.
+         *              one - the value of all diagonal elements
+         *              fill - the value to be used to fill the non-diagonal elements of the identity matrix
+         */
+        public Identity (int rows = 1, double one = 1.0, double fill = 0.0)
+        {
+            this.rows = rows;
+            this.cols = rows;
+            data = new double[rows, cols];
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (i == j)
+                        data[i, j] = one;
+                    else
+                        data[i, j] = fill;
+                }
+            }
+        }
+    }
+
+    class Diagonal : Matrix
+    {
+        /* Constructor: Diagonal 
+         * Purpose: Constructs an n x n Matrix with the i-th diagonal element equal to the i-th value of the passed array.
+         *          Inherits from the Matrix class.
+         * Parameters:  d - array of elements to populate in diagonal elements of Matrix. M[i, i] = d[i]
+         */
+        public Diagonal(double[] d)
+        {
+            this.rows = d.Length;
+            this.cols = d.Length;
+            data = new double[rows, cols];
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (i == j)
+                        data[i, j] = d[i];
+                    else
+                        data[i, j] = 0.0;
+                }
+            }
+        }
+    }
 
     class Matrix
     {
-        
+        /* ??? should these be public or private ??? */
+        public int rows, cols;
+        public double[,] data; /* ??? Does this need to be type Object ??? */
+        //private double fill;
+
         /* Constructor: Matrix
          * Purpose: 
-         * Parameters:
+         * Parameters:  rows - the integer number of rows
+         *              cols - the integer number of columns
+         *              fill - the value or callable to be used to fill the matrix
          */
-        public Matrix(/*rows=1,cols=1,fill=0.0,optimize=False*/)
+        public Matrix(int rows = 1, int cols = 1, double fill = 0.0, bool optimize = false /* ??? What does optimize do ??? */)
         {
-            int rows, columns;
-            double fill;
+            this.rows = rows;
+            this.cols = cols;
+            data = new double[rows, cols];
+            for (int i = 0; i < rows; i++)
+                for (int j = 0; j < cols; j++)
+                    data[i, j] = fill;
+        }
+
+        public void setElement(int i, int j, double value) { data[i, j] = value; }
+        public double getElement(int i, int j) { Console.WriteLine(i + ", " + j);  return data[i, j]; }
+
+        /* Override: ToString
+         * Purpose: Prints out the full string of a Matrix in a readable row by row format.
+         * Parameters: None
+         * Returns: String output.
+         */
+        public override string ToString()
+        {
+            String mFormat = "[";
+
+            for (int i = 0; i < rows; i++)
+            {
+                if (i != 0) mFormat += ", ";
+                mFormat += "[";
+                for (int j = 0; j < cols; j++)
+                {
+                    if (j != 0) mFormat += ", ";
+                    mFormat += data[i, j].ToString();
+                }
+                mFormat += "]";
+            }
+            mFormat += "]";
+            return mFormat;
+        }
 
      /* def __init__(self,rows=1,cols=1,fill=0.0,optimize=False):
         """
@@ -43,7 +169,7 @@ namespace CSC431_Final_Project
         if optimize:
             import array
             self.data = array.array('d',self.data)
-        */
+        
         
 
     def __getitem__(self,(i,j)):
@@ -64,19 +190,7 @@ namespace CSC431_Final_Project
     def __str__(self):
         return str(self.as_list())
 
-    @staticmethod
-    def identity(rows=1,one=1.0,fill=0.0):
-        """
-        Constuctor a diagonal matrix
-        Parameters
-        - rows: the integer number of rows (also number of columns)
-        - fill: the value to be used to fill the matrix
-        - one: the value in the diagonal
-        """
-        M = Matrix(rows,rows,fill)
-        for i in xrange(rows): M[i,i] = one
-        return M
-
+ 
     @staticmethod
     def diagonal(d):
         M = Matrix(len(d),len(d))
@@ -150,25 +264,39 @@ namespace CSC431_Final_Project
             for c in xrange(M.cols):
                  M[r,c] *= x
         return M
+      */
 
-    def __mul__(A,B):
-        "multiplies a number of matrix A by another matrix B"
-        if isinstance(B,(list,tuple)):
-            return (A*Matrix(len(B),1,fill=lambda r,c:B[r])).data
-        elif not isinstance(B,Matrix):
-            return B*A
-        elif A.cols == 1 and B.cols==1 and A.rows == B.rows:
-            # try a scalar product ;-)
-            return sum(A[r,0]*B[r,0] for r in xrange(A.rows))
-        elif A.cols!=B.rows:
-            raise ArithmeticError, "incompatible dimensions"
-        M = Matrix(A.rows,B.cols)
-        for r in xrange(A.rows):
-            for c in xrange(B.cols):
-                for k in xrange(A.cols):
-                    M[r,c] += A[r,k]*B[k,c]
-        return M
+        /* Override: Multiplication (*)
+         * Purpose: Multiply two matrices A and B together to return matrix M. M[i,j] = A_i1*B_1j + A_i2*B_2j + ... + A_in*B_nj.
+         *          Exception will thrown if number of columns of matrix A does not equal the number of rows in matrix B.
+         * Parameters: A - First matrix operand.
+         *             B - Second matrix operand.
+         * Returns: Resulting matrix of the matrix multiplication.
+         */
+        public static Matrix operator *(Matrix A, Matrix B)
+        {
+            try
+            {
+                var ex = new InvalidOperationException("Incompatible Dimensions: Matrix A.cols != Matrix B.rows"); 
+                
+                if (A.cols != B.rows) { throw ex; }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
+            Matrix M = new Matrix(A.rows, B.cols);
+        
+            for (int r = 0; r < A.rows; r++)
+                for (int c = 0; c < B.cols; c++)
+                    for (int k = 0; k < A.cols; k++)
+                        M.setElement(r, c, M.getElement(r, c) + (A.getElement(r, k) * B.getElement(k, c)));
+
+            return M;
+        }
+        
+/*
     def __rdiv__(A,x):
         """Computes x/A using Gauss-Jordan elimination where x is a scalar"""
         import copy
@@ -348,17 +476,7 @@ def fit_least_squares(points, f):
 
      */
     }
-        
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Numeric n = new Numeric();
-            Console.WriteLine("Hello, World");
-            Console.WriteLine(n.sqrt(-10));
-            Console.ReadLine();
-        }
-    }
+       
 
     class Numeric
     {
