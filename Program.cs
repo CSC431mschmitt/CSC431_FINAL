@@ -18,13 +18,15 @@ namespace CSC431_Final_Project
             Matrix m2 = new Matrix();
             Matrix m3 = new Matrix(3, 3, 4.5);
             Matrix m4 = new Matrix(6, 2, 7);
+            Matrix m5 = new Identity(3, 4, 7); 
 
-            Console.WriteLine("Definition is Matrix(4, 3): " + m1);
+            //Console.WriteLine("Definition is Matrix(4, 3): " + m1);
             //Console.WriteLine("\nDefinition is Matrix(): " + m2);
-            Console.WriteLine("\nDefinition is Matrix(3, 3, 4.5): " + m3);
+            //Console.WriteLine("\nDefinition is Matrix(3, 3, 4.5): " + m3);
             //Console.WriteLine("\nDefinition is Matrix(6, 2, 7): " + m4);
             //m4.setElement(1, 1, 2222);
-            Console.WriteLine(m1*m3);
+            //Console.WriteLine(m1*m3);
+            //Console.WriteLine(m5);
 
             //Console.WriteLine(m1*m3);
             //Console.WriteLine(m1*m2);
@@ -43,6 +45,33 @@ namespace CSC431_Final_Project
         }
     }
 
+    class Identity : Matrix
+    {
+        /* Constructor: Identity 
+         * Purpose: Constructs an n x n Matrix with the diagonal elements equal to the same value.  All non-diagonal elements are equal as well.
+         *          Inherits from the Matrix class.
+         * Parameters:  rows - the integer number of rows and columns.
+         *              one - the value of all diagonal elements
+         *              fill - the value to be used to fill the non-diagonal elements of the identity matrix
+         */
+        public Identity (int rows = 1, double one = 1.0, double fill = 0.0)
+        {
+            this.rows = rows;
+            this.cols = rows;
+            data = new double[rows, cols];
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (i == j)
+                        data[i, j] = one;
+                    else
+                        data[i, j] = fill;
+                }
+            }
+        }
+    }
 
     class Matrix
     {
@@ -132,19 +161,7 @@ namespace CSC431_Final_Project
     def __str__(self):
         return str(self.as_list())
 
-    @staticmethod
-    def identity(rows=1,one=1.0,fill=0.0):
-        """
-        Constuctor a diagonal matrix
-        Parameters
-        - rows: the integer number of rows (also number of columns)
-        - fill: the value to be used to fill the matrix
-        - one: the value in the diagonal
-        """
-        M = Matrix(rows,rows,fill)
-        for i in xrange(rows): M[i,i] = one
-        return M
-
+ 
     @staticmethod
     def diagonal(d):
         M = Matrix(len(d),len(d))
