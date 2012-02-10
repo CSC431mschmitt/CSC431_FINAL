@@ -62,6 +62,11 @@ namespace CSC431_Final_Project
                     data[i, j] = fill;
         }
 
+        /* Override: ToString
+         * Purpose: Prints out the full string of a Matrix in a readable row by row format.
+         * Parameters: None
+         * Returns: String output.
+         */
         public override string ToString()
         {
             String mFormat = "[";
