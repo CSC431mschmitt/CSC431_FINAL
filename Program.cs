@@ -7,24 +7,79 @@ using System.Text;
 
 namespace CSC431_Final_Project
 {
+    class Program
+    {
+        /* This will be for running tests. */
+        static void Main(string[] args)
+        {
+            //Numeric n = new Numeric();
+            
+            Matrix m1 = new Matrix(4, 3);
+            Matrix m2 = new Matrix();
+            Matrix m3 = new Matrix(3, 3, 4.5);
+            Matrix m4 = new Matrix(6, 2, 7);
+
+            Console.WriteLine("Definition is Matrix(4, 3): " + m1);
+            Console.WriteLine("\nDefinition is Matrix(): " + m2);
+            Console.WriteLine("\nDefinition is Matrix(3, 3, 4.5): " + m3);
+            Console.WriteLine("\nDefinition is Matrix(6, 2, 7): " + m4);
+
+            Console.ReadLine();
+        }
+    }
 
     class Function
     {
+        public String full_function { get; set; }
 
+        public Function(String full_function)
+        {
+            this.full_function = full_function;
+        }
     }
 
 
     class Matrix
     {
-        
+        /* ??? should these be public or private ??? */
+        private int rows, cols;
+        double[,] data; /* ??? Does this need to be type Object ??? */
+        //private double fill;
+
         /* Constructor: Matrix
          * Purpose: 
-         * Parameters:
+         * Parameters:  rows - the integer number of rows
+         *              cols - the integer number of columns
+         *              fill - the value or callable to be used to fill the matrix
          */
-        public Matrix(/*rows=1,cols=1,fill=0.0,optimize=False*/)
+        public Matrix(int rows = 1, int cols = 1, double fill = 0.0, bool optimize = false /* ??? What does optimize do ??? */)
         {
-            int rows, columns;
-            double fill;
+            this.rows = rows;
+            this.cols = cols;
+            data = new double[rows, cols];
+            for (int i = 0; i < rows; i++)
+                for (int j = 0; j < cols; j++)
+                    data[i, j] = fill;
+        }
+
+        public override string ToString()
+        {
+            String mFormat = "[";
+
+            for (int i = 0; i < rows; i++)
+            {
+                if (i != 0) mFormat += ", ";
+                mFormat += "[";
+                for (int j = 0; j < cols; j++)
+                {
+                    if (j != 0) mFormat += ", ";
+                    mFormat += data[i, j].ToString();
+                }
+                mFormat += "]";
+            }
+            mFormat += "]";
+            return mFormat;
+        }
 
      /* def __init__(self,rows=1,cols=1,fill=0.0,optimize=False):
         """
@@ -43,7 +98,7 @@ namespace CSC431_Final_Project
         if optimize:
             import array
             self.data = array.array('d',self.data)
-        */
+        
         
 
     def __getitem__(self,(i,j)):
@@ -348,17 +403,7 @@ def fit_least_squares(points, f):
 
      */
     }
-        
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Numeric n = new Numeric();
-            Console.WriteLine("Hello, World");
-            Console.WriteLine(n.sqrt(-10));
-            Console.ReadLine();
-        }
-    }
+       
 
     class Numeric
     {
