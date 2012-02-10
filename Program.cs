@@ -21,6 +21,7 @@ namespace CSC431_Final_Project
             Matrix m5 = new Identity(3, 4, 7); 
             double[] v = new double[] {4, 3, 2, 1};
             Matrix m6 = new Diagonal(v);
+            List <double[]> m7 = new List<double[]>();
 
             //Console.WriteLine("Definition is Matrix(4, 3): " + m1);
             //Console.WriteLine("\nDefinition is Matrix(): " + m2);
@@ -32,8 +33,24 @@ namespace CSC431_Final_Project
 
             //Console.WriteLine(m1*m3);
             //Console.WriteLine(m1*m2);
-            Console.WriteLine(m6);
-
+            //Console.WriteLine(m6);
+            m7 = m6.as_list(m6);
+            Console.WriteLine(m7[0][0]);
+            Console.WriteLine(m7[0][1]);
+            Console.WriteLine(m7[0][2]);
+            Console.WriteLine(m7[0][3]);
+            Console.WriteLine(m7[1][0]);
+            Console.WriteLine(m7[1][1]);
+            Console.WriteLine(m7[1][2]);
+            Console.WriteLine(m7[1][3]);
+            Console.WriteLine(m7[2][0]);
+            Console.WriteLine(m7[2][1]);
+            Console.WriteLine(m7[2][2]);
+            Console.WriteLine(m7[2][3]);
+            Console.WriteLine(m7[3][0]);
+            Console.WriteLine(m7[3][1]);
+            Console.WriteLine(m7[3][2]);
+            Console.WriteLine(m7[3][3]);
             Console.ReadLine();
         }
     }
@@ -47,6 +64,8 @@ namespace CSC431_Final_Project
             this.full_function = full_function;
         }
     }
+
+
 
     class Identity : Matrix
     {
@@ -126,7 +145,7 @@ namespace CSC431_Final_Project
         }
 
         public void setElement(int i, int j, double value) { data[i, j] = value; }
-        public double getElement(int i, int j) { Console.WriteLine(i + ", " + j);  return data[i, j]; }
+        public double getElement(int i, int j) { return data[i, j]; }
 
         /* Override: ToString
          * Purpose: Prints out the full string of a Matrix in a readable row by row format.
@@ -183,10 +202,33 @@ namespace CSC431_Final_Project
 
     def col(self,i):
         return Matrix(self.rows,1,fill=lambda r,c: A[r,i])
+        */
 
-    def as_list(A):
-        return [[A[r,c] for c in xrange(A.cols)] for r in xrange(A.rows)]
+        /* Function: as_list
+         * Purpose: 
+         * Parameters: 
+         * Returns: 
+         */
+        /* ??? Can this instead be a function defined within Matrix as as_list() ??? */
+        public List<double[]> as_list(Matrix A)
+        {
+            List <double[]> toList = new List<double[]>();
+            double[] values;
+            
+            for (int r = 0; r < A.rows; r++)
+            {
+                values = new double[A.cols];
 
+                for (int c = 0; c < cols; c++)
+                    values[c] = A.getElement(r, c);
+                    
+                toList.Add(values);
+            }
+            return toList;
+        }
+        
+
+        /*
     def __str__(self):
         return str(self.as_list())
 
