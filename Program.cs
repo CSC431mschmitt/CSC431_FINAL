@@ -11,20 +11,7 @@ namespace MatrixTester
         /* This will be for running tests. */
         static void Main(string[] args)
         {
-            //Numeric n = new Numeric();
-            
-            //Matrix m1 = new Matrix(4, 3, 2);
-            //Matrix m2 = new Matrix();
-            //Matrix m3 = new Matrix(3, 3, 4.5);
-            //Matrix m4 = new Matrix(6, 2, 7);
-            //Matrix m5 = new Identity(3, 4, 7); 
-            //double[] v = new double[] {4, 3, 2, 1};
-            //double[] v1 = new double[] {1, 2};
-            //double[] v2 = new double[] {3, 4};
-            //Matrix m6 = new Diagonal(v);
-
-            //List <double[]> m7 = new List<double[]>();
-
+            /*
             //Test def from_list(v)
             List<double[]> data = new List<double[]>(){new double[]{1,2}, new double[]{3,4}};
             Matrix m_from_list = Matrix.from_list(data);
@@ -120,35 +107,15 @@ namespace MatrixTester
             b1[0, 0] = 5.0;
             Console.WriteLine("b1: " + b1.ToString());
             Console.WriteLine("b1_copy: " + b1_copy.ToString());
+            */
 
-            //Console.WriteLine("Definition is Matrix(4, 3): " + m1);
-            //Console.WriteLine("\nDefinition is Matrix(): " + m2);
-            //Console.WriteLine("\nDefinition is Matrix(3, 3, 4.5): " + m3);
-            //Console.WriteLine("\nDefinition is Matrix(6, 2, 7): " + m4);
-            //m4.setElement(1, 1, 2222);
-            //Console.WriteLine(m1*m3);
-            //Console.WriteLine(m5);
+            //Test Matrix Division
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
+            Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 5, 2 }, new double[] { 1, 1 } });
 
-            //Console.WriteLine(m1*m3);
-            //Console.WriteLine(m1*m2);
-            //Console.WriteLine(m6);
-            //m7 = m6.as_list(m6);
-            //Console.WriteLine(m7[0][0]);
-            //Console.WriteLine(m7[0][1]);
-            //Console.WriteLine(m7[0][2]);
-            //Console.WriteLine(m7[0][3]);
-            //Console.WriteLine(m7[1][0]);
-            //Console.WriteLine(m7[1][1]);
-            //Console.WriteLine(m7[1][2]);
-            //Console.WriteLine(m7[1][3]);
-            //Console.WriteLine(m7[2][0]);
-            //Console.WriteLine(m7[2][1]);
-            //Console.WriteLine(m7[2][2]);
-            //Console.WriteLine(m7[2][3]);
-            //Console.WriteLine(m7[3][0]);
-            //Console.WriteLine(m7[3][1]);
-            //Console.WriteLine(m7[3][2]);
-            //Console.WriteLine(m7[3][3]);
+            Console.WriteLine("A/B: " + A / B);
+            Console.WriteLine("B/A: " + B / A);
+
             Console.ReadLine();
         }
     }
