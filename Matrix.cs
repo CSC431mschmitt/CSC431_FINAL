@@ -375,12 +375,35 @@ namespace MatrixLib
             return B;
         }
 
-        /* This needs to be implemented to complete division operator */
-        //def __div__(A,B):
-        //    if isinstance(B,Matrix):
-        //        return A*(1.0/B) # matrix/marix
-        //    else:
-        //        return (1.0/B)*A # matrix/scalar
+        public static Matrix operator /(Matrix A, Matrix B)
+        /* Override:    Division (/)
+         * Purpose:     Computes A/B using Gauss-Jordan elimination using scalar of 1.
+         *              Exception thrown if Matrix A is singular.
+         * Parameters:  A - Matrix.
+         *              B - Matrix.
+         * Returns:     Resulting matrix of the matrix division.
+         */
+        {
+            Matrix M = null;
+
+            try
+            {
+                if (B._rows != B._cols)
+                {
+                    throw new ArithmeticException("Matrix B is not square.");
+                }
+                else
+                {
+                    M = A*(B/1);
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return M;
+        }
 
         public void swap_rows(int i, int j)
         {
