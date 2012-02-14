@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
+/*
+ * This code is distributed under the BSD license, and it is a rewrite of
+ * code shared in CSC431 class at DePaul University by Massimo Di Pierro.
+ */ 
 namespace MatrixLib
 {
     class Function
     {
         public String full_function { get; set; }
-
         public Function(String full_function)
         {
             this.full_function = full_function;
@@ -115,7 +119,7 @@ namespace MatrixLib
         public static Matrix from_list(List<double[]> vlist)
         /*
          * Purpose:     Builds a matrix from a list of arrays
-         * Parameter:   List of arrays
+         * Parameters:   List of arrays
          * Output:      Matrix with rows = number of lists, cols = number of items in first array
          */
         {
