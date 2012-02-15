@@ -37,9 +37,9 @@ namespace MatrixTester
             Matrix m_identity = Matrix.identity(3, 1, 0);
             Console.WriteLine("identity matrix: " + m_identity);
 
-            //Test def diagnol(array[])
-            Matrix m_diagnol = Matrix.diagonal(new double[] { 5, 6, 7, 8 });
-            Console.WriteLine("diagnol matrix : " +  m_diagnol);
+            //Test def diagonol(array[])
+            Matrix m_diagonol = Matrix.diagonal(new double[] { 5, 6, 7, 8 });
+            Console.WriteLine("diagonol matrix : " +  m_diagonol);
 
             //Test def row(row_num)
             Console.WriteLine( "print row 0 of matrix: " + m_from_list.row(0) );
@@ -109,12 +109,24 @@ namespace MatrixTester
             Console.WriteLine("b1_copy: " + b1_copy.ToString());
             */
 
-            //Test Matrix Division
-            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
-            Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 5, 2 }, new double[] { 1, 1 } });
+            ////Test Matrix Division
+            //Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
+            //Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 5, 2 }, new double[] { 1, 1 } });
 
-            Console.WriteLine("A/B: " + A / B);
-            Console.WriteLine("B/A: " + B / A);
+            //Console.WriteLine("A/B: " + A / B);
+            //Console.WriteLine("B/A: " + B / A);
+
+            Numeric n = new Numeric();
+
+            //Test is_almost_symmetric, expect success
+            Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 1, 7, 3 }, new double[] { 7, 4, -5 }, new double[] { 3, -5, 6 } });
+            Console.WriteLine("A is_almost_symmetric (expect success): " + n.is_almost_symmetric(B));
+            
+            //Test is_almost_symmetric, expect fail
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
+            Console.WriteLine("A is_almost_symmetric (expect fail): " + n.is_almost_symmetric(A));
+
+            Console.WriteLine(Math.Pow(10.0, -6) * 7.0);
 
             Console.ReadLine();
         }
