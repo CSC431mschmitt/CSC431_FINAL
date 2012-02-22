@@ -62,213 +62,6 @@ namespace MatrixLib
             }
 
             return 0.0;
-        } 
-    }
-    
-    public class Numeric
-    {
-        public bool is_almost_symmetric(Matrix A, double ap = 0.000001, double rp = 0.0001)
-        /* 
-         * Purpose:     Determine if Matrix A almost symmetric A[i,j] almost equal to A[j, i], within certain precision.
-         * Parameters:  A - Matrix to test for symmetry.
-         *              ap = 
-         * Returns:     Resulting matrix of the matrix subtraction.
-         */
-        {
-            if (A.rows != A.cols)
-                return false;
-
-            else
-            {
-                for (int r = 0; r < A.rows; r++)
-                {
-                    for (int c = 0; c < r; c++)
-                    {
-                        Console.WriteLine("r, c: " + r + "," + c);
-                        Console.WriteLine("A[r, c]: " + A[r, c]);
-                        Console.WriteLine("A[c, r]: " + A[c, r]);
-                        double delta = Math.Abs(A[r, c] - A[c, r]);
-                        Console.WriteLine("delta: " + delta);
-                        double abs_arc = Math.Abs(A[r, c]);
-                        double abs_acr = Math.Abs(A[c, r]);
-                        Console.WriteLine("Math.Max(abs_arc, abs_acr)*rp: " + Math.Max(abs_arc, abs_acr) * rp);
-                        if ((delta > ap) && (delta > Math.Max(abs_arc, abs_acr) * rp))
-                            return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        /* do not know purpose of this and it is not called anywhere in numeric_final.py */
-        public bool is_almost_zero(Matrix A, double ap = 0.000001, double rp = 0.0001)
-        {
-            var result = true;
-
-            for (int r = 0; r < A.rows; r++)
-            {
-                for (int c = 0; c < A.rows; c++)
-                {
-                    double delta = Math.Abs(A[r, c] - A[c, r]);
-                    double abs_arc = Math.Abs(A[r, c]);
-                    double abs_acr = Math.Abs(A[c, r]);
-                    if ((delta > ap) && (delta > Math.Max(abs_arc, abs_acr) * rp))
-                        result = false;
-                }
-            }
-
-            return result;
-        }
-
-        /*
-        def norm(A,p=1):
-            if isinstance(A,(list,tuple)):
-                return sum(x**p for x in A)**(1.0/p)
-            elif isinstance(A,Matrix):
-                if A.rows==1 or A.cols==1:
-                     return sum(norm(A[r,c])**p \
-                        for r in xrange(A.rows) \
-                        for c in xrange(A.cols))**(1.0/p)
-                elif p==1:
-                     return max([sum(norm(A[r,c]) \
-                        for r in xrange(A.rows)) \
-                        for c in xrange(A.cols)])
-                else:
-                     raise NotImplementedError
-            else:
-                return abs(A)
-
-        def condition_number(f,x=None,h=0.000001):
-            if callable(f) and not x is None:
-                return D(f,h)(x)*x/f(x)
-            elif isinstance(f,Matrix): # if is the Matrix J
-                return norm(f)*norm(1/f)
-            else:
-                raise NotImplementedError
-
-        def exp(x,double ap=0.000001,double rp=0.0001,int ns=40):
-            if isinstance(x,Matrix):
-               t = s = Matrix.identity(x.cols)
-               for k in range(1,ns):
-                   t = t*x/k   # next term
-                   s = s + t   # add next term
-                   if norm(t)<max(ap,norm(s)*rp): return s
-               raise ArithmeticError, 'no convergence'
-            elif type(x)==type(1j):
-               return cmath.exp(x)
-            else:
-               return math.exp(x)
-
-        def Cholesky(A):
-            import copy, math
-            if not is_almost_symmetric(A):
-                raise ArithmeticError, 'not symmetric'
-            L = copy.deepcopy(A)
-            for k in xrange(L.cols):
-                if L[k,k]<=0:
-                    raise ArithmeticError, 'not positive definitive'
-                p = L[k,k] = math.sqrt(L[k,k])
-                for i in xrange(k+1,L.rows):
-                    L[i,k] /= p
-                for j in xrange(k+1,L.rows):
-                    p=float(L[j,k])
-                    for i in xrange(k+1,L.rows):
-                        L[i,j] -= p*L[i,k]
-            for  i in xrange(L.rows):
-                for j in range(i+1,L.cols):
-                    L[i,j]=0
-            return L
-
-        def is_positive_definite(A):
-            if not is_symmetric(A):
-                return False
-            try:
-                Cholesky(A)
-                return True
-            except RuntimeError:
-                return False
-
-        def Markovitz(mu, A, r_free):
-            """Assess Markovitz risk/return.
-            Example:
-            >>> cov = Matrix.from_list([[0.04, 0.006,0.02],
-            ...                        [0.006,0.09, 0.06],
-            ...                        [0.02, 0.06, 0.16]])
-            >>> mu = Matrix.from_list([[0.10],[0.12],[0.15]])
-            >>> r_free = 0.05
-            >>> x, ret, risk = Markovitz(mu, cov, r_free)
-            >>> print x
-            [0.556634..., 0.275080..., 0.1682847...]
-            >>> print ret, risk
-            0.113915... 0.186747...
-            """
-            x = Matrix(A.rows, 1)
-            x = (1/A)*(mu - r_free)
-            x = x/sum(x[r,0] for r in range(x.rows))
-            portfolio = [x[r,0] for r in range(x.rows)]
-            portfolio_return = mu*x
-            portfolio_risk = sqrt(x*(A*x))
-            return portfolio, portfolio_return, portfolio_risk
-
-        def fit_least_squares(points, f):
-            """
-            Computes c_j for best linear fit of y[i] \pm dy[i] = fitting_f(x[i])
-            where fitting_f(x[i]) is \sum_j c_j f[j](x[i])
-
-            parameters:
-            - a list of fitting functions
-            - a list with points (x,y,dy)
-
-            returns:
-            - column vector with fitting coefficients
-            - the chi2 for the fit
-            - the fitting function as a lambda x: ....
-            """
-            def eval_fitting_function(f,c,x):
-                if len(f)==1: return c*f[0](x)
-                else: return sum(func(x)*c[i,0] for i,func in enumerate(f))
-            A = Matrix(len(points),len(f))
-            b = Matrix(len(points))
-            for i in range(A.rows):
-                weight = 1.0/points[i][2] if len(points[i])>2 else 1.0
-                b[i,0] = weight*float(points[i][1])
-                for j in range(A.cols):
-                    A[i,j] = weight*f[j](float(points[i][0]))
-            c = (1.0/(A.t*A))*(A.t*b)
-            chi = A*c-b
-            chi2 = norm(chi,2)**2
-            fitting_f = lambda x, c=c, f=f, q=eval_fitting_function: q(f,c,x)
-            return c.data, chi2, fitting_f
-
-             */
-    
-        
-        public double sqrt(double x)
-        /* Function: sqrt
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
-         */
-        {
-            /*    try:
-                    return math.sqrt(x)
-                except ValueError:
-                    return cmath.sqrt(x)
-             */
-            double a;
-
-            try
-            {
-                a = Math.Sqrt(x);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                a = 0.0;
-            }
-            
-            return a;
         }
 
         public void solve_fixed_point(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
@@ -313,25 +106,6 @@ namespace MatrixLib
                 else: (a,fa) = (x, fx)
             raise ArithmeticError, 'no convergence'
 
-             */
-        }
-
-        public void solve_newton(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
-        /* Function: solve_newton
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
-         */
-        {
-            /* 
-            x = float(x) # make sure it is not int
-            for k in xrange(ns):
-                (fx, Dfx) = (f(x), D(f)(x))
-                if norm(Dfx) < ap:
-                    raise ArithmeticError, 'unstable solution'
-                (x_old, x) = (x, x-fx/Dfx)
-                if k>2 and norm(x-x_old)<max(ap,norm(x)*rp): return x
-            raise ArithmeticError, 'no convergence'
              */
         }
 
@@ -559,7 +333,7 @@ namespace MatrixLib
 */
         }
 
-        
+
         public void jacobian(Function f, double x, double h = 0.0001)
         /* Function: jacobian
          * Purpose: 
@@ -631,6 +405,213 @@ namespace MatrixLib
             raise ArithmeticError, 'no convergence'
 
              */
+        }
+    }
+    
+    public class Numeric
+    {
+        public bool is_almost_symmetric(Matrix A, double ap = 0.000001, double rp = 0.0001)
+        /* 
+         * Purpose:     Determine if Matrix A almost symmetric A[i,j] almost equal to A[j, i], within certain precision.
+         * Parameters:  A - Matrix to test for symmetry.
+         *              ap = 
+         * Returns:     Resulting matrix of the matrix subtraction.
+         */
+        {
+            if (A.rows != A.cols)
+                return false;
+
+            else
+            {
+                for (int r = 0; r < A.rows; r++)
+                {
+                    for (int c = 0; c < r; c++)
+                    {
+                        Console.WriteLine("r, c: " + r + "," + c);
+                        Console.WriteLine("A[r, c]: " + A[r, c]);
+                        Console.WriteLine("A[c, r]: " + A[c, r]);
+                        double delta = Math.Abs(A[r, c] - A[c, r]);
+                        Console.WriteLine("delta: " + delta);
+                        double abs_arc = Math.Abs(A[r, c]);
+                        double abs_acr = Math.Abs(A[c, r]);
+                        Console.WriteLine("Math.Max(abs_arc, abs_acr)*rp: " + Math.Max(abs_arc, abs_acr) * rp);
+                        if ((delta > ap) && (delta > Math.Max(abs_arc, abs_acr) * rp))
+                            return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /* do not know purpose of this and it is not called anywhere in numeric_final.py */
+        public bool is_almost_zero(Matrix A, double ap = 0.000001, double rp = 0.0001)
+        {
+            var result = true;
+
+            for (int r = 0; r < A.rows; r++)
+            {
+                for (int c = 0; c < A.rows; c++)
+                {
+                    double delta = Math.Abs(A[r, c] - A[c, r]);
+                    double abs_arc = Math.Abs(A[r, c]);
+                    double abs_acr = Math.Abs(A[c, r]);
+                    if ((delta > ap) && (delta > Math.Max(abs_arc, abs_acr) * rp))
+                        result = false;
+                }
+            }
+
+            return result;
+        }
+
+        /*
+        def norm(A,p=1):
+            if isinstance(A,(list,tuple)):
+                return sum(x**p for x in A)**(1.0/p)
+            elif isinstance(A,Matrix):
+                if A.rows==1 or A.cols==1:
+                     return sum(norm(A[r,c])**p \
+                        for r in xrange(A.rows) \
+                        for c in xrange(A.cols))**(1.0/p)
+                elif p==1:
+                     return max([sum(norm(A[r,c]) \
+                        for r in xrange(A.rows)) \
+                        for c in xrange(A.cols)])
+                else:
+                     raise NotImplementedError
+            else:
+                return abs(A)
+
+        def condition_number(f,x=None,h=0.000001):
+            if callable(f) and not x is None:
+                return D(f,h)(x)*x/f(x)
+            elif isinstance(f,Matrix): # if is the Matrix J
+                return norm(f)*norm(1/f)
+            else:
+                raise NotImplementedError
+
+        def exp(x,double ap=0.000001,double rp=0.0001,int ns=40):
+            if isinstance(x,Matrix):
+               t = s = Matrix.identity(x.cols)
+               for k in range(1,ns):
+                   t = t*x/k   # next term
+                   s = s + t   # add next term
+                   if norm(t)<max(ap,norm(s)*rp): return s
+               raise ArithmeticError, 'no convergence'
+            elif type(x)==type(1j):
+               return cmath.exp(x)
+            else:
+               return math.exp(x)
+
+        def Cholesky(A):
+            import copy, math
+            if not is_almost_symmetric(A):
+                raise ArithmeticError, 'not symmetric'
+            L = copy.deepcopy(A)
+            for k in xrange(L.cols):
+                if L[k,k]<=0:
+                    raise ArithmeticError, 'not positive definitive'
+                p = L[k,k] = math.sqrt(L[k,k])
+                for i in xrange(k+1,L.rows):
+                    L[i,k] /= p
+                for j in xrange(k+1,L.rows):
+                    p=float(L[j,k])
+                    for i in xrange(k+1,L.rows):
+                        L[i,j] -= p*L[i,k]
+            for  i in xrange(L.rows):
+                for j in range(i+1,L.cols):
+                    L[i,j]=0
+            return L
+
+        def is_positive_definite(A):
+            if not is_symmetric(A):
+                return False
+            try:
+                Cholesky(A)
+                return True
+            except RuntimeError:
+                return False
+
+        def Markovitz(mu, A, r_free):
+            """Assess Markovitz risk/return.
+            Example:
+            >>> cov = Matrix.from_list([[0.04, 0.006,0.02],
+            ...                        [0.006,0.09, 0.06],
+            ...                        [0.02, 0.06, 0.16]])
+            >>> mu = Matrix.from_list([[0.10],[0.12],[0.15]])
+            >>> r_free = 0.05
+            >>> x, ret, risk = Markovitz(mu, cov, r_free)
+            >>> print x
+            [0.556634..., 0.275080..., 0.1682847...]
+            >>> print ret, risk
+            0.113915... 0.186747...
+            """
+            x = Matrix(A.rows, 1)
+            x = (1/A)*(mu - r_free)
+            x = x/sum(x[r,0] for r in range(x.rows))
+            portfolio = [x[r,0] for r in range(x.rows)]
+            portfolio_return = mu*x
+            portfolio_risk = sqrt(x*(A*x))
+            return portfolio, portfolio_return, portfolio_risk
+
+        def fit_least_squares(points, f):
+            """
+            Computes c_j for best linear fit of y[i] \pm dy[i] = fitting_f(x[i])
+            where fitting_f(x[i]) is \sum_j c_j f[j](x[i])
+
+            parameters:
+            - a list of fitting functions
+            - a list with points (x,y,dy)
+
+            returns:
+            - column vector with fitting coefficients
+            - the chi2 for the fit
+            - the fitting function as a lambda x: ....
+            """
+            def eval_fitting_function(f,c,x):
+                if len(f)==1: return c*f[0](x)
+                else: return sum(func(x)*c[i,0] for i,func in enumerate(f))
+            A = Matrix(len(points),len(f))
+            b = Matrix(len(points))
+            for i in range(A.rows):
+                weight = 1.0/points[i][2] if len(points[i])>2 else 1.0
+                b[i,0] = weight*float(points[i][1])
+                for j in range(A.cols):
+                    A[i,j] = weight*f[j](float(points[i][0]))
+            c = (1.0/(A.t*A))*(A.t*b)
+            chi = A*c-b
+            chi2 = norm(chi,2)**2
+            fitting_f = lambda x, c=c, f=f, q=eval_fitting_function: q(f,c,x)
+            return c.data, chi2, fitting_f
+
+             */
+    
+        
+        public double sqrt(double x)
+        /* Function: sqrt
+         * Purpose: 
+         * Parameters: 
+         * Returns: 
+         */
+        {
+            /*    try:
+                    return math.sqrt(x)
+                except ValueError:
+                    return cmath.sqrt(x)
+             */
+            double a;
+
+            try
+            {
+                a = Math.Sqrt(x);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                a = 0.0;
+            }
+            
+            return a;
         }
     }
 }
