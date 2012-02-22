@@ -88,7 +88,10 @@ namespace MatrixTester
             Console.WriteLine("A: " + A.ToString());
             Console.WriteLine("B: " + B.ToString());
             Console.WriteLine("B - A: " + (B - A));
-
+            
+            //Test __neg__(A)
+            Console.WriteLine("-A: " + (-A));
+            
             //Test swap_rows(A, i, j)
             Console.WriteLine("B: " + B.ToString());
             B.swap_rows(0, 1);
