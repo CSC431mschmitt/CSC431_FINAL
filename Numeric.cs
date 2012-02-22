@@ -12,11 +12,57 @@ namespace MatrixLib
 {
     public class Function
     {
-        public String full_function { get; set; }
-        public Function(String full_function)
+        public Function() { }
+
+        public virtual double f(double x) { return 0 * x; }
+
+        public double Df(double x, double h = 1e-5) { return (f(x + h) - f(x - h)) / (2.0 * h); }
+
+        public double DDf(double x, double h = 1e-5) { return (f(x + h) - 2.0 * f(x) + f(x - h)) / (h * h); }
+  
+        public double solve_newton(double x_guess, double ap = 1e-5, double rp = 1e-4, int ns = 100) {
+            
+            double x_old, x = x_guess;
+            
+            try
+            {
+                for (int k = 0; k < ns; k++) {
+                    x_old = x;
+                    x = x - f(x) / Df(x);
+                    if (Math.Abs(x - x_old) < Math.Max(ap, rp * Math.Abs(x))) return x;
+                }
+
+                throw new InvalidOperationException("No Convergence");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return 0.0;
+        }  
+
+        public double optimize_newton(double x_guess, double ap = 1e-5, double rp = 1e-4, int ns = 20)
         {
-            this.full_function = full_function;
-        }
+            double x_old, x = x_guess;
+
+            try
+            {
+                for (int k = 0; k < ns; k++) {
+                    x_old = x;
+                    x = x - Df(x) / DDf(x);
+                    if (Math.Abs(x - x_old) < Math.Max(ap, rp * Math.Abs(x))) return x;
+                }
+            
+                throw new InvalidOperationException("No Convergence");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return 0.0;
+        } 
     }
     
     public class Numeric
