@@ -472,6 +472,19 @@ namespace MatrixLib
             return M;
         }
 
+        public static Matrix operator -(Matrix A)
+        /* Override:    Negative (-)
+         * Purpose:     Reverse the sign of each element in matrix A. A[i,j] = -A[i,j]
+         * Parameters:  A - Matrix.
+         * Returns:     Resulting matrix of the opposite sign.
+         */
+        {
+            for (int i = 0; i < A._rows; i++)
+                for (int j = 0; j < A._cols; j++)
+                    A[i, j] *= -1;
+            return A;
+        }
+
         public static Matrix operator -(Matrix A, Matrix B)
         /* Override:    Subtraction (-)
          * Purpose:     Subtract two matrices A and B to return matrix M. M[i,j] = A[i,j] - B[i,j]
@@ -508,7 +521,7 @@ namespace MatrixLib
             {
                 Console.WriteLine(ex.ToString());
             }
-                        
+
             return M;
         }
     }
