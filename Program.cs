@@ -6,6 +6,12 @@ using MatrixLib;
 
 namespace MatrixTester
 {
+
+    class MyFunction : Function 
+    {
+        public override double f(double x) { return (x-2)*(x+8); }
+    };
+
     class Program
     {
         /* This will be for running tests. */
@@ -110,15 +116,36 @@ namespace MatrixTester
             b1[0, 0] = 5.0;
             Console.WriteLine("b1: " + b1.ToString());
             Console.WriteLine("b1_copy: " + b1_copy.ToString());
-            */
+            
 
             ////Test Matrix Division
             //Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
             //Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 5, 2 }, new double[] { 1, 1 } });
 
-            //Console.WriteLine("A/B: " + A / B);
-            //Console.WriteLine("B/A: " + B / A);
+            //Console.WriteLine("A / B: " + A / B);
+            //Console.WriteLine("B / A: " + B / A);
+            
+            ////Test Function Class
+            //MyFunction mFunction = new MyFunction();
 
+            //Test Function Return
+            //Console.WriteLine(mFunction.f(2)); // f(2) = 0
+            //Console.WriteLine(mFunction.f(5)); // f(5) = 39
+
+            //Test Function First Derivative
+            //Console.WriteLine(mFunction.Df(2)); // Df(2) = 10
+            //Console.WriteLine(mFunction.Df(5)); // Df(5) = 16
+
+            //Test Function Second Derivative
+            //Console.WriteLine(mFunction.DDf(2)); // DDf(2) ~ 2
+            //Console.WriteLine(mFunction.DDf(5)); // DDf(5) ~ 2
+
+            //Test Function Solve Newton
+            //Console.WriteLine(mFunction.solve_newton(0.5)); //Should roughly equal 2.
+            //Console.WriteLine(mFunction.optimize_newton(0.5)); //Should roughly equal -3.
+            */
+
+            
             Numeric n = new Numeric();
 
             //Test is_almost_symmetric, expect success
@@ -130,7 +157,7 @@ namespace MatrixTester
             Console.WriteLine("A is_almost_symmetric (expect fail): " + n.is_almost_symmetric(A));
 
             Console.WriteLine(Math.Pow(10.0, -6) * 7.0);
-
+            
             Console.ReadLine();
         }
     }
