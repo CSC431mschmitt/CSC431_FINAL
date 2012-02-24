@@ -53,7 +53,7 @@ namespace MatrixLib
                     x = x - Df(x) / DDf(x);
                     if (Math.Abs(x - x_old) < Math.Max(ap, rp * Math.Abs(x))) return x;
                 }
-            
+
                 throw new InvalidOperationException("No Convergence");
             }
             catch (Exception ex)
@@ -63,6 +63,11 @@ namespace MatrixLib
 
             return 0.0;
         }
+
+        class MyFunction : Function
+        {
+            public override double f(double x) { return (x - 2) * (x + 8); }
+        };
 
         public void solve_fixed_point(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
         /* Function: solve_fixed_point
@@ -85,28 +90,52 @@ namespace MatrixLib
              */
         }
 
-        public void solve_bisection(Function f, double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
+        public double solve_bisection(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
         /* Function: solve_bisection
          * Purpose: 
-         * Parameters: 
+         * Parameters: ???Are a and b matrix or double parameters???
          * Returns: 
          */
         {
-            /* 
-            fa, fb = f(a), f(b)
-            if fa == 0: return a
-            if fb == 0: return b
-            if fa*fb > 0:
-                raise ArithmeticError, 'f(a) and f(b) must have opposite sign'
-            for k in xrange(ns):
-                x = (a+b)/2
-                fx = f(x)
-                if fx==0 or norm(b-a)<max(ap,norm(x)*rp): return x
-                elif fx * fa < 0: (b,fb) = (x, fx)
-                else: (a,fa) = (x, fx)
-            raise ArithmeticError, 'no convergence'
+            double fa = f(a), fb = f(b), x, fx;
 
-             */
+            if (fa == 0) return a;
+            if (fb == 0) return b;
+
+            try
+            {
+                if (fa * fb > 0) 
+                    throw new InvalidOperationException("f(a) and f(b) must have opposite sign.");
+
+                for (int k = 0; k < ns; k++)
+                {
+                    x = (a + b) / 2;
+                    fx = f(x);
+
+                    if (fx == 0 || Math.Abs(b - a) < Math.Max(ap, rp * Math.Abs(x)))
+                    {
+                        return x;
+                    }
+                    else if (fx * fa < 0)
+                    {
+                        b = x;
+                        fb = fx;
+                    }
+                    else
+                    {
+                        a = x;
+                        fa = fx;
+                    }
+                }
+
+                throw new InvalidOperationException("No Convergence");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return 0.0;
         }
 
         public void solve_secant(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
@@ -116,6 +145,7 @@ namespace MatrixLib
          * Returns: 
          */
         {
+
             /* 
              x = float(x) # make sure it is not int
             (fx, Dfx) = (f(x), D(f)(x))
@@ -131,32 +161,65 @@ namespace MatrixLib
              */
         }
 
-        public void solve_newton_stabilized(Function f, double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 20)
+        public double solve_newton_stabilized(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 20)
         /* Function: solve_newton_stabilized
         * Purpose: 
         * Parameters: 
         * Returns: 
         */
         {
-            /* 
-            fa, fb = f(a), f(b)
-            if fa == 0: return a
-            if fb == 0: return b
-            if fa*fb > 0:
-                raise ArithmeticError, 'f(a) and f(b) must have opposite sign'
-            x = (a+b)/2
-            (fx, Dfx) = (f(x), D(f)(x))
-            for k in xrange(ns):
-                x_old, fx_old = x, fx
-                if norm(Dfx)>ap: x = x - fx/Dfx
-                if x==x_old or x<a or x>b: x = (a+b)/2
-                fx = f(x)
-                if fx==0 or norm(x-x_old)<max(ap,norm(x)*rp): return x
-                Dfx = (fx-fx_old)/(x-x_old)
-                if fx * fa < 0: (b,fb) = (x, fx)
-                else: (a,fa) = (x, fx)
-            raise ArithmeticError, 'no convergence'          
-             */
+            double fa = f(a), fb = f(b), x, fx, Dfx, x_old, fx_old;
+
+            if (fa == 0) return a;
+            if (fb == 0) return b;
+
+            try
+            {
+                if (fa * fb > 0)
+                    throw new InvalidOperationException("f(a) and f(b) must have opposite sign.");
+
+                x = (a + b) / 2;
+                fx = f(x);
+                Dfx = Df(x);
+
+                for (int k = 0; k < ns; k++)
+                {
+                    x_old = x;
+                    fx_old = fx;
+
+                    if (Math.Abs(Dfx) > ap)
+                        x -= fx/Dfx;
+
+                    if (x == x_old || x < a || x > b) 
+                        x = (a + b) / 2;
+
+                    fx = f(x);
+
+                    if (fx == 0 || Math.Abs(x - x_old) < Math.Max(ap, Math.Abs(x) * rp))
+                        return x;
+
+                    Dfx = (fx - fx_old) / (x - x_old);
+
+                    if (fx * fa < 0)
+                    {
+                        b = x;
+                        fb = fx;
+                    }
+                    else
+                    {
+                        a = x;
+                        fa = fx;
+                    }
+                }
+
+                throw new InvalidOperationException("No Convergence");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return 0.0;
         }
 
         public void optimize_bisection(Function f, double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
@@ -180,26 +243,6 @@ namespace MatrixLib
                 else: (a,Dfa) = (x, Dfx)
             raise ArithmeticError, 'no convergence'
 
-             */
-        }
-
-        public void optimize_newton(Function f, float x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
-        /* Function: optimize_newton
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
-         */
-        {
-            /* 
-             x = float(x) # make sure it is not int
-            for k in xrange(ns):
-                (Dfx, DDfx) = (D(f)(x), DD(f)(x))
-                if Dfx==0: return x
-                if norm(DDfx) < ap:
-                    raise ArithmeticError, 'unstable solution'
-                (x_old, x) = (x, x-Dfx/DDfx)
-                if norm(x-x_old)<max(ap,norm(x)*rp): return x
-            raise ArithmeticError, 'no convergence'
              */
         }
 
