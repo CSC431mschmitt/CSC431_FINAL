@@ -222,28 +222,52 @@ namespace MatrixLib
             return 0.0;
         }
 
-        public void optimize_bisection(Function f, double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
+        public double optimize_bisection(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
         /* Function: optimize_bisection
          * Purpose: 
          * Parameters: 
          * Returns: 
          */
         {
-            /* 
-             Dfa, Dfb = D(f)(a), D(f)(b)
-            if Dfa == 0: return a
-            if Dfb == 0: return b
-            if Dfa*Dfb > 0:
-                raise ArithmeticError, 'D(f)(a) and D(f)(b) must have opposite sign'
-            for k in xrange(ns):
-                x = (a+b)/2
-                Dfx = D(f)(x)
-                if Dfx==0 or norm(b-a)<max(ap,norm(x)*rp): return x
-                elif Dfx * Dfa < 0: (b,Dfb) = (x, Dfx)
-                else: (a,Dfa) = (x, Dfx)
-            raise ArithmeticError, 'no convergence'
+            double Dfa = Df(a), Dfb = Df(b), x, Dfx;
 
-             */
+            if (Dfa == 0) return a;
+            if (Dfb == 0) return b;
+
+            try
+            {
+                if (Dfa * Dfb > 0)
+                    throw new InvalidOperationException("Df(a) and Df(b) must have opposite sign.");
+
+                for (int k = 0; k < ns; k++)
+                {
+                    x = (a + b) / 2;
+                    Dfx = Df(x);
+
+                    if (Dfx == 0 || Math.Abs(b - a) < Math.Max(ap, rp * Math.Abs(x)))
+                    {
+                        return x;
+                    }
+                    else if (Dfx * Dfa < 0)
+                    {
+                        b = x;
+                        Dfb = Dfx;
+                    }
+                    else
+                    {
+                        a = x;
+                        Dfa = Dfx;
+                    }
+                }
+
+                throw new InvalidOperationException("No Convergence");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return 0.0;
         }
 
         public void optimize_secant(Function f, float x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
@@ -266,39 +290,74 @@ namespace MatrixLib
                 Dfx = D(f)(x)
                 DDfx = (Dfx - Dfx_old)/(x-x_old)
             raise ArithmeticError, 'no convergence'
-
              */
+            
         }
 
-        public void optimize_newton_stabilized(Function f, double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 20)
+        public double optimize_newton_stabilized(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 20)
         /* Function: optimize_newton_stabilized
          * Purpose: 
          * Parameters: 
          * Returns: 
          */
         {
-            /* 
-             Dfa, Dfb = D(f)(a), D(f)(b)
-            if Dfa == 0: return a
-            if Dfb == 0: return b
-            if Dfa*Dfb > 0:
-                raise ArithmeticError, 'D(f)(a) and D(f)(b) must have opposite sign'
-            x = (a+b)/2
-            (fx, Dfx, DDfx) = (f(x), D(f)(x), DD(f)(x))
-            for k in xrange(ns):
-                if Dfx==0: return x
-                x_old, fx_old, Dfx_old = x, fx, Dfx
-                if norm(DDfx)>ap: x = x - Dfx/DDfx
-                if x==x_old or x<a or x>b: x = (a+b)/2
-                if norm(x-x_old)<max(ap,norm(x)*rp): return x
-                fx = f(x)
-                Dfx = (fx-fx_old)/(x-x_old)
-                DDfx = (Dfx-Dfx_old)/(x-x_old)
-                if Dfx * Dfa < 0: (b,Dfb) = (x, Dfx)
-                else: (a,Dfa) = (x, Dfx)
-            raise ArithmeticError, 'no convergence'
+            double Dfa = Df(a), Dfb = Df(b), x, fx, Dfx, DDfx, x_old, fx_old, Dfx_old;
 
-             */
+            if (Dfa == 0) return a;
+            if (Dfb == 0) return b;
+
+            try
+            {
+                if (Dfa * Dfb > 0)
+                    throw new InvalidOperationException("Df(a) and Df(b) must have opposite sign.");
+
+                x = (a + b) / 2;
+                fx = f(x);
+                Dfx = Df(x);
+                DDfx = DDf(x);
+
+                for (int k = 0; k < ns; k++)
+                {
+                    if (Dfx == 0)
+                        return x;
+
+                    x_old = x;
+                    fx_old = fx;
+                    Dfx_old = Dfx;
+ 
+                    if (Math.Abs(DDfx) > ap)
+                        x = x - Dfx / DDfx;
+
+                    if (x == x_old || x < a || x > b) 
+                        x = (a + b) / 2;
+
+                    if (Math.Abs(x - x_old) < Math.Max(ap, Math.Abs(x) * rp))
+                        return x;
+    
+                    fx = f(x);
+                    Dfx = (fx - fx_old) / (x - x_old);
+                    DDfx = (Dfx - Dfx_old)  /(x - x_old);
+
+                    if (Dfx * Dfa < 0)
+                    {
+                        b = x;
+                        Dfb = Dfx;
+                    }
+                    else
+                    {
+                        a = x;
+                        Dfa = Dfx;
+                    }
+                }
+
+                throw new InvalidOperationException("No Convergence");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return 0.0;
         }
 
         public void optimize_golden_search(Function f, double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
