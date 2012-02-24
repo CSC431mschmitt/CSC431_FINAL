@@ -7,9 +7,14 @@ using MatrixLib;
 namespace MatrixTester
 {
 
-    class MyFunction : Function 
+    class MyFunction : Function
     {
-        public override double f(double x) { return (x-2)*(x+8); }
+        public override double f(double x) { return (x - 2) * (x + 8); }
+    };
+
+    class MyFunction2 : Function
+    {
+        public override double f(double x) { return (x - 2) * (x - 2) * (x - 2) + x; }
     };
 
     class Program
@@ -124,9 +129,10 @@ namespace MatrixTester
 
             //Console.WriteLine("A / B: " + A / B);
             //Console.WriteLine("B / A: " + B / A);
-            
+            */
             ////Test Function Class
-            //MyFunction mFunction = new MyFunction();
+            MyFunction mFunction = new MyFunction();
+            MyFunction2 mFunction2 = new MyFunction2();
 
             //Test Function Return
             //Console.WriteLine(mFunction.f(2)); // f(2) = 0
@@ -143,9 +149,17 @@ namespace MatrixTester
             //Test Function Solve Newton
             //Console.WriteLine(mFunction.solve_newton(0.5)); //Should roughly equal 2.
             //Console.WriteLine(mFunction.optimize_newton(0.5)); //Should roughly equal -3.
-            */
 
+            //Test Function Solve Newton Stabilized
+            //Console.WriteLine(mFunction.solve_newton_stabilized(-0.5, 9)); //Should roughly equal 2.000000002707719.
+            //Console.WriteLine(mFunction2.solve_newton_stabilized(-10, 9)); //Should roughly equal 0.9999999946201354.
+
+            //Test Function Solve Bisection
+            //Console.WriteLine(mFunction.solve_bisection(-0.5, 9)); //Should roughly equal 2.0000267028808594.
+            //Console.WriteLine(mFunction2.solve_bisection(-10, 9)); //Should roughly equal 0.9999942779541016.
             
+
+            /*
             Numeric n = new Numeric();
 
             //Test is_almost_symmetric, expect success
@@ -157,7 +171,8 @@ namespace MatrixTester
             Console.WriteLine("A is_almost_symmetric (expect fail): " + n.is_almost_symmetric(A));
 
             Console.WriteLine(Math.Pow(10.0, -6) * 7.0);
-            
+            */
+
             Console.ReadLine();
         }
     }
