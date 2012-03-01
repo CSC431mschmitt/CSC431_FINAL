@@ -311,8 +311,8 @@ namespace MatrixLib
          * Purpose:     Computes x/A using Gauss-Jordan elimination.
          *              Exception thrown if Matrix A is singular.
          * Parameters:  A - Matrix.
-         *              B - Scalar.
-         * Returns:     Resulting matrix of the matrix division.
+         *              x - Scalar.
+         * Returns:     Resulting matrix of the scalar by matrix division.
          */
         {
             Matrix B = null;
@@ -368,6 +368,18 @@ namespace MatrixLib
             }
 
             return B;
+        }
+
+        public static Matrix operator /(Matrix A, double x)
+        /* Override:    Division (/)
+         * Purpose:     Computes A/x by multiplying A by the inverse of x.
+         *              Exception thrown if Matrix A is singular.
+         * Parameters:  A - Matrix.
+         *              x - Scalar.
+         * Returns:     Resulting matrix of the matrix by scalar division.
+         */
+        {
+            return A * (1.0/x);
         }
 
         public static Matrix operator /(Matrix A, Matrix B)
