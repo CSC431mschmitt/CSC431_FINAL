@@ -306,7 +306,7 @@ namespace MatrixLib
             return M;
         }
 
-        public static Matrix operator /(Matrix A, double x)
+        public static Matrix operator /(double x, Matrix A)
         /* Override:    Division (/)
          * Purpose:     Computes x/A using Gauss-Jordan elimination.
          *              Exception thrown if Matrix A is singular.
@@ -389,7 +389,7 @@ namespace MatrixLib
                 }
                 else
                 {
-                    M = A*(B/1.0);
+                    M = A*(1.0 / B);
                 }
             }
             catch (InvalidOperationException ex)
