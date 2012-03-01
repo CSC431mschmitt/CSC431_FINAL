@@ -19,7 +19,7 @@ namespace MatrixLib
         public double Df(double x, double h = 1e-5) { return (f(x + h) - f(x - h)) / (2.0 * h); }
 
         public double DDf(double x, double h = 1e-5) { return (f(x + h) - 2.0 * f(x) + f(x - h)) / (h * h); }
-  
+
         public double solve_newton(double x_guess, double ap = 1e-5, double rp = 1e-4, int ns = 100) {
             
             double x_old, x = x_guess;
@@ -64,10 +64,10 @@ namespace MatrixLib
             return 0.0;
         }
 
-        class MyFunction : Function
-        {
-            public override double f(double x) { return (x - 2) * (x + 8); }
-        };
+        //class MyFunction : Function
+        //{
+        //    public override double f(double x) { return (x - 2) * (x + 8); }
+        //};
 
         public void solve_fixed_point(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
         /* Function: solve_fixed_point
@@ -516,8 +516,9 @@ namespace MatrixLib
         /* 
          * Purpose:     Determine if Matrix A almost symmetric A[i,j] almost equal to A[j, i], within certain precision.
          * Parameters:  A - Matrix to test for symmetry.
-         *              ap = 
-         * Returns:     Resulting matrix of the matrix subtraction.
+         *              ap - absolute precision
+         *              rp - relative precision
+         * Returns:     True is matrix is almost symmetric, else false
          */
         {
             if (A.rows != A.cols)
@@ -546,8 +547,14 @@ namespace MatrixLib
             return true;
         }
 
-        /* do not know purpose of this and it is not called anywhere in numeric_final.py */
         public bool is_almost_zero(Matrix A, double ap = 0.000001, double rp = 0.0001)
+        /* 
+         * Purpose:     Determine if Matrix A is almost zero (what does that mean??)
+         * Parameters:  A - Matrix to test 
+         *              ap - absolute precision
+         *              rp - relative precision
+         * Returns:     True is matrix is almost zero, else false
+         */
         {
             var result = true;
 
@@ -566,74 +573,187 @@ namespace MatrixLib
             return result;
         }
 
+        public double norm(List<double> x, int p=1)
+        /* 
+         * Purpose:     Compute p-th root of sum of list items each raised to power of p 
+         * Parameters:  x - List of double values 
+         *              p - The norm value to compute 
+         *              
+         * Returns:     p-norm of vector x
+         */
+        {
+            double sum = 0.0;
+            for (int i = 0; i < x.Count; i++)
+            {
+                sum += Math.Pow(Math.Abs(x[i]), p);
+            }
+                
+            return Math.Pow(sum, 1.0/p);
+        }
+
+        public double norm(Matrix A, int p=1)
+        /* 
+         * Purpose:     Compute p-norm of Matrix A
+         * Parameters:  A - Matrix
+         *              p - The norm value to compute
+         * Returns:     p-norm for m x 1 and 1 x n Matrix,
+         *              or 1-norm for m x n Matrix, else
+         *              raises Not Implemented error
+         */
+        {   
+            if ( p == 1 )
+            {
+                List<double> sums = new List<double>();
+
+                for (int c = 0; c < A.cols; c++)
+                {
+                    double sum = 0.0;
+
+                    for (int r = 0; r < A.rows; r++)    
+                    {
+                        sum += Math.Abs(A[r, c]);
+                    }
+                    
+                    sums.Add(sum);
+                }
+
+                return sums.Max();
+            }
+            else if ((A.rows == 1) || (A.cols == 1))
+            {
+                double sum = 0.0;
+
+                for (int c = 0; c < A.cols; c++)
+                {
+                    for (int r = 0; r < A.rows; r++)
+                    {
+                        sum += Math.Pow(Math.Abs(A[r, c]), p);
+                    }
+                }
+
+                return Math.Pow(sum, 1.0 / p);
+            }
+            else
+                throw new InvalidOperationException("NotImplementedError");
+        }
+        
+        public double condition_number(Function func, double x, double h=0.000001)
+        /* 
+         * Purpose:     Compute condition number for a function, f
+         * Parameters:  f - Specified function
+         *              x - Specific point at which to evaluate f
+         *              h - Small value to indicate change in x 
+         * Returns:     Value estimating how sensitive function f
+         *              is to small changes in x
+         */
+        {
+            try 
+            {
+                return func.Df(x, h) * x / func.f(x);
+            }
+            catch 
+            {
+                throw new InvalidOperationException("NotImplementedError");
+            }
+        }
+        
+        public double condition_number(Matrix A)
+        /* 
+         * Purpose:     Compute condition number for a Matrix
+         * Parameters:  A - Matrix
+         * Returns:     Value representing stability of Matrix A
+         */
+        {
+            try
+            {
+                return norm(A) * norm(1.0/A);
+            }
+            catch
+            {
+                throw new InvalidOperationException("NotImplementedError");
+            }
+        }
+
+
+        public Matrix exp(Matrix A, double ap=0.000001, double rp=0.0001, int ns=40)
+        /* 
+         * Purpose:     Compute exponential of Matrix A using series expansion
+         * Parameters:  A - Matrix to test for symmetry.
+         *              ap - absolute precision
+         *              rp - relative precision
+         *              ns - number of iterations
+         * Returns:     Matrix exponential for square matrix, else
+         *              raises error
+         */
+        {
+            Matrix T = Matrix.identity(A.cols);
+            Matrix S = Matrix.identity(A.cols);
+
+            for (int k = 1; k < ns; k++)
+            {
+                T = T*A/k; //next term
+                S = S + T; //add next term
+
+                if (norm(T) < Math.Max(ap, norm(S) * rp))
+                    return S;
+            }
+            
+            throw new ArithmeticException("No convergence.");
+        }
+
+        public bool is_positive_definite(Matrix A)
+        /* 
+         * Purpose:     Compute exponential of Matrix A using series expansion
+         * Parameters:  A - Matrix to test for symmetry.
+         *              ap - absolute precision
+         *              rp - relative precision
+         *              ns - number of iterations
+         * Returns:     Matrix exponential for square matrix, else
+         *              raises error
+         */
+        {
+            if (!is_almost_symmetric(A))
+                return false;
+
+            try
+            {
+                Cholesky(A);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        public Matrix Cholesky(Matrix A)
+        {
+            Matrix L = A.Clone();
+        //
+        //    import copy, math
+        //    if not is_almost_symmetric(A):
+        //        raise ArithmeticError, 'not symmetric'
+        //    L = copy.deepcopy(A)
+        //    for k in xrange(L.cols):
+        //        if L[k,k]<=0:
+        //            raise ArithmeticError, 'not positive definitive'
+        //        p = L[k,k] = math.sqrt(L[k,k])
+        //        for i in xrange(k+1,L.rows):
+        //            L[i,k] /= p
+        //        for j in xrange(k+1,L.rows):
+        //            p=float(L[j,k])
+        //            for i in xrange(k+1,L.rows):
+        //                L[i,j] -= p*L[i,k]
+        //    for  i in xrange(L.rows):
+        //        for j in range(i+1,L.cols):
+        //            L[i,j]=0
+        //    return L
+        
+            return L;
+        }
+        
         /*
-        def norm(A,p=1):
-            if isinstance(A,(list,tuple)):
-                return sum(x**p for x in A)**(1.0/p)
-            elif isinstance(A,Matrix):
-                if A.rows==1 or A.cols==1:
-                     return sum(norm(A[r,c])**p \
-                        for r in xrange(A.rows) \
-                        for c in xrange(A.cols))**(1.0/p)
-                elif p==1:
-                     return max([sum(norm(A[r,c]) \
-                        for r in xrange(A.rows)) \
-                        for c in xrange(A.cols)])
-                else:
-                     raise NotImplementedError
-            else:
-                return abs(A)
-
-        def condition_number(f,x=None,h=0.000001):
-            if callable(f) and not x is None:
-                return D(f,h)(x)*x/f(x)
-            elif isinstance(f,Matrix): # if is the Matrix J
-                return norm(f)*norm(1/f)
-            else:
-                raise NotImplementedError
-
-        def exp(x,double ap=0.000001,double rp=0.0001,int ns=40):
-            if isinstance(x,Matrix):
-               t = s = Matrix.identity(x.cols)
-               for k in range(1,ns):
-                   t = t*x/k   # next term
-                   s = s + t   # add next term
-                   if norm(t)<max(ap,norm(s)*rp): return s
-               raise ArithmeticError, 'no convergence'
-            elif type(x)==type(1j):
-               return cmath.exp(x)
-            else:
-               return math.exp(x)
-
-        def Cholesky(A):
-            import copy, math
-            if not is_almost_symmetric(A):
-                raise ArithmeticError, 'not symmetric'
-            L = copy.deepcopy(A)
-            for k in xrange(L.cols):
-                if L[k,k]<=0:
-                    raise ArithmeticError, 'not positive definitive'
-                p = L[k,k] = math.sqrt(L[k,k])
-                for i in xrange(k+1,L.rows):
-                    L[i,k] /= p
-                for j in xrange(k+1,L.rows):
-                    p=float(L[j,k])
-                    for i in xrange(k+1,L.rows):
-                        L[i,j] -= p*L[i,k]
-            for  i in xrange(L.rows):
-                for j in range(i+1,L.cols):
-                    L[i,j]=0
-            return L
-
-        def is_positive_definite(A):
-            if not is_symmetric(A):
-                return False
-            try:
-                Cholesky(A)
-                return True
-            except RuntimeError:
-                return False
-
         def Markovitz(mu, A, r_free):
             """Assess Markovitz risk/return.
             Example:
