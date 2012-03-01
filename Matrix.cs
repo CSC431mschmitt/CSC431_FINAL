@@ -186,12 +186,12 @@ namespace MatrixLib
             return M;
         }
 
-        public static Matrix identity(int rows, double diagonol, double fill = 0.0)
+        public static Matrix identity(int rows, double diagonal = 1.0, double fill = 0.0)
         /* Constructor: Identity 
          * Purpose:     Constructs an n x n Matrix with the diagonal elements equal to the same value.  All non-diagonal elements are equal as well.
          *              Inherits from the Matrix class.
          * Parameters:  rows - the integer number of rows and columns.
-         *              one - the value of all diagonal elements
+         *              diagonal - the value of all diagonal elements
          *              fill - the value to be used to fill the non-diagonal elements of the identity matrix
          * Output:      rowsXrows square matrix with ones on the main diagonal and zeros elsewhere.
          */
@@ -203,7 +203,7 @@ namespace MatrixLib
                 for (int j = 0; j < rows; j++)
                 {
                     if (i == j)
-                        M[i, j] = diagonol;
+                        M[i, j] = diagonal;
                     else
                         M[i, j] = fill;
                 }
