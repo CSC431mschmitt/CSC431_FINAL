@@ -17,122 +17,130 @@ namespace MatrixTester
         public override double f(double x) { return (x - 2) * (x - 2) * (x - 2) + x; }
     };
 
+    class MyFunction3 : Function
+    {
+        public override double f(double x) { return (x * x) - (5.0 * x); }
+    };
+
     class Program
     {
         /* This will be for running tests. */
         static void Main(string[] args)
         {
-            /*
             //Test def from_list(v)
-            List<double[]> data = new List<double[]>(){new double[]{1,2}, new double[]{3,4}};
-            Matrix m_from_list = Matrix.from_list(data);
-            Console.WriteLine("from list: " + m_from_list);
+            //List<double[]> data = new List<double[]>(){new double[]{1}, new double[]{3}};
+            //Matrix m_from_list = Matrix.from_list(data);
+            //Console.WriteLine("from list: " + m_from_list);
 
-            //Test def as_list(A)
-            List<double[]> m_as_list = m_from_list.as_list();
-            Console.WriteLine("as list: ");
-            Console.Write("\t[");
-            for (int j=0; j < m_as_list.Count; j++)
-            {
-                for (int k=0; k < m_as_list[j].Length; k++)
-                {
-                    if (j > 0)
-                        Console.Write(", ");
-                    Console.Write( String.Format("[{0}, {1}]", m_as_list[j][k], m_as_list[j][k+1]) );
-                    k++;
-                }
-            }
-            Console.WriteLine("]");
+            ////Test def as_list(A)
+            //List<double[]> m_as_list = m_from_list.as_list();
+            //Console.Write("\t[");
+            //for (int j = 0; j < m_as_list.Count; j++)
+            //{
+            //    for (int k = 0; k < m_as_list[j].Length; k++)
+            //    {
+            //        if (j > 0)
+            //            Console.Write(", ");
+            //        Console.Write(String.Format("[{0}]", m_as_list[j][k]));
+            //        k++;
+            //    }
+            //}
+            //Console.WriteLine("]");
             
-            //Test def identity(rows)
-            Matrix m_identity = Matrix.identity(3, 1, 0);
-            Console.WriteLine("identity matrix: " + m_identity);
+            ////Test def identity(rows)
+            //Matrix m_identity = Matrix.identity(3, 1, 0);
+            //Console.WriteLine("identity matrix: " + m_identity);
 
-            //Test def diagonol(array[])
-            Matrix m_diagonol = Matrix.diagonal(new double[] { 5, 6, 7, 8 });
-            Console.WriteLine("diagonol matrix : " +  m_diagonol);
+            ////Test def diagonol(array[])
+            //Matrix m_diagonol = Matrix.diagonal(new double[] { 5, 6, 7, 8 });
+            //Console.WriteLine("diagonol matrix : " +  m_diagonol);
 
-            //Test def row(row_num)
-            Console.WriteLine( "print row 0 of matrix: " + m_from_list.row(0) );
+            ////Test def row(row_num)
+            //Console.WriteLine( "print row 0 of matrix: " + m_from_list.row(0) );
 
-            //Test def row(row_num)
-            Console.WriteLine("print row 1 of matrix: " + m_from_list.row(1));
+            ////Test def row(row_num)
+            //Console.WriteLine("print row 1 of matrix: " + m_from_list.row(1));
 
-            //Test def col(col_num)
-            Console.WriteLine("print col 0 of matrix: " + m_from_list.col(0));
+            ////Test def col(col_num)
+            //Console.WriteLine("print col 0 of matrix: " + m_from_list.col(0));
 
-            //Test def col(col_num)
-            Console.WriteLine("print col 1 of matrix: " + m_from_list.col(1));
+            ////Test def col(col_num)
+            //Console.WriteLine("print col 1 of matrix: " + m_from_list.col(1));
 
-            //Test __mult__(A, B)
-            Matrix A = m_from_list;
-            List<double[]> Blist = new List<double[]>() { new double[] { 1 }, new double[] { 2 } };
-            Matrix B = Matrix.from_list(Blist);
-            Console.WriteLine("A: " + A.ToString());
-            Console.WriteLine("B: " + B.ToString());
-            Console.WriteLine("A * B: " + (A*B) );
+            ////Test __mult__(A, B)
+            //Matrix A = m_from_list;
+            //List<double[]> Blist = new List<double[]>() { new double[] { 1 }, new double[] { 2 } };
+            //Matrix B = Matrix.from_list(Blist);
+            //Console.WriteLine("A: " + A.ToString());
+            //Console.WriteLine("B: " + B.ToString());
+            //Console.WriteLine("A * B: " + (A*B) );
 
-            //Test __mult__(c1, c2)
-            Matrix c1 = Matrix.from_list( new List<double[]>() { new double[] {3}, new double[] {2}, new double[] {1} } );
-            Matrix c2 = Matrix.from_list( new List<double[]>() { new double[] {4}, new double[] {5}, new double[] {6} });
-            Console.WriteLine("c1: " + c1.ToString());
-            Console.WriteLine("c2: " + c2.ToString());
-            Console.WriteLine("c1 * c2: " + (c1 * c2));
+            ////Test __mult__(c1, c2)
+            //Matrix c1 = Matrix.from_list( new List<double[]>() { new double[] {3}, new double[] {2}, new double[] {1} } );
+            //Matrix c2 = Matrix.from_list( new List<double[]>() { new double[] {4}, new double[] {5}, new double[] {6} });
+            //Console.WriteLine("c1: " + c1.ToString());
+            //Console.WriteLine("c2: " + c2.ToString());
+            //Console.WriteLine("c1 * c2: " + (c1 * c2));
 
-            //Test __mult__(c3, x)
-            Matrix c3 = m_from_list;
-            Matrix c4 = Matrix.from_list(new List<double[]>() { new double[] { 4 }, new double[] { 5 }, new double[] { 6 } });
-            double x = 5.0;
-            Console.WriteLine("c3: " + c3.ToString());
-            Console.WriteLine("c4: " + c4.ToString());
-            Console.WriteLine("c3 * x: " + (c3 * x));
-            Console.WriteLine("c4 * x: " + (c4 * x));
+            ////Test __mult__(c3, x)
+            //Matrix c3 = m_from_list;
+            //Matrix c4 = Matrix.from_list(new List<double[]>() { new double[] { 4 }, new double[] { 5 }, new double[] { 6 } });
+            //double x = 5.0;
+            //Console.WriteLine("c3: " + c3.ToString());
+            //Console.WriteLine("c4: " + c4.ToString());
+            //Console.WriteLine("c3 * x: " + (c3 * x));
+            //Console.WriteLine("c4 * x: " + (c4 * x));
 
-            //Test __add__(A, B)
-            Blist = new List<double[]>() { new double[] { 4, 3 }, new double[] { 2, 1 } };
-            B = Matrix.from_list(Blist);
-            Console.WriteLine("A: " + A.ToString());
-            Console.WriteLine("B: " + B.ToString());
-            Console.WriteLine("A + B: " + (A + B));
+            ////Test __add__(A, B)
+            //Blist = new List<double[]>() { new double[] { 4, 3 }, new double[] { 2, 1 } };
+            //B = Matrix.from_list(Blist);
+            //Console.WriteLine("A: " + A.ToString());
+            //Console.WriteLine("B: " + B.ToString());
+            //Console.WriteLine("A + B: " + (A + B));
 
-            //Test __sub__(A, B)
-            Console.WriteLine("A: " + A.ToString());
-            Console.WriteLine("B: " + B.ToString());
-            Console.WriteLine("B - A: " + (B - A));
+            ////Test __sub__(A, B)
+            //Console.WriteLine("A: " + A.ToString());
+            //Console.WriteLine("B: " + B.ToString());
+            //Console.WriteLine("B - A: " + (B - A));
             
-            //Test __neg__(A)
-            Console.WriteLine("-A: " + (-A));
+            ////Test __neg__(A)
+            //Console.WriteLine("-A: " + (-A));
             
-            //Test swap_rows(A, i, j)
-            Console.WriteLine("B: " + B.ToString());
-            B.swap_rows(0, 1);
-            Console.WriteLine("B after swap rows: " + B.ToString());
+            ////Test swap_rows(A, i, j)
+            //Console.WriteLine("B: " + B.ToString());
+            //B.swap_rows(0, 1);
+            //Console.WriteLine("B after swap rows: " + B.ToString());
 
-            //Test Transpose property
-            Matrix A1 = Matrix.from_list( new List<double[]>() { new double[] { 1,2,3 }, new double[] { 4,5,6 } } );
-            Console.WriteLine(A1.ToString());
-            Console.WriteLine(A1.Transpose());
+            ////Test Transpose property
+            //Matrix A1 = Matrix.from_list( new List<double[]>() { new double[] { 1,2,3 }, new double[] { 4,5,6 } } );
+            //Console.WriteLine(A1.ToString());
+            //Console.WriteLine(A1.Transpose());
 
-            //Test Clone Matrix
-            Matrix b1 = Matrix.from_list( new List<double[]>() { new double[] { 4, 3 }, new double[] { 2, 1 } } );
-            Matrix b1_copy = b1.Clone();
-            Console.WriteLine("b1: " + b1.ToString());
-            Console.WriteLine("b1_copy: " + b1_copy.ToString());
-            b1[0, 0] = 5.0;
-            Console.WriteLine("b1: " + b1.ToString());
-            Console.WriteLine("b1_copy: " + b1_copy.ToString());
+            ////Test Clone Matrix
+            //Matrix b1 = Matrix.from_list( new List<double[]>() { new double[] { 4, 3 }, new double[] { 2, 1 } } );
+            //Matrix b1_copy = b1.Clone();
+            //Console.WriteLine("b1: " + b1.ToString());
+            //Console.WriteLine("b1_copy: " + b1_copy.ToString());
+            //b1[0, 0] = 5.0;
+            //Console.WriteLine("b1: " + b1.ToString());
+            //Console.WriteLine("b1_copy: " + b1_copy.ToString());
             
-
-            ////Test Matrix Division
-            //Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
+            //Test Matrix Division
+            //Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 4, 9 } });
             //Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 5, 2 }, new double[] { 1, 1 } });
 
-            //Console.WriteLine("A / B: " + A / B);
-            //Console.WriteLine("B / A: " + B / A);
-            */
-            ////Test Function Class
-            MyFunction mFunction = new MyFunction();
-            MyFunction2 mFunction2 = new MyFunction2();
+            //Console.WriteLine("1 / A: " + 1 / A);
+            //Console.WriteLine("A / A: " + A / A);
+            //Console.WriteLine("A / 2: " + A / 2);
+
+            //A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2, 2 }, new double[] { 4, 4, 2 }, new double[] { 4, 6, 4 } });
+            //B = Matrix.from_list(new List<double[]>() { new double[] { 3 }, new double[] { 6 }, new double[] { 10 } });
+            //Matrix x = (1 / A) * B;
+            //Console.WriteLine("x: " + x);
+            
+            //Test Function Class
+            //MyFunction mFunction = new MyFunction();
+            //MyFunction2 mFunction2 = new MyFunction2();
 
             //Test Function Return
             //Console.WriteLine(mFunction.f(2)); // f(2) = 0
@@ -159,19 +167,69 @@ namespace MatrixTester
             //Console.WriteLine(mFunction2.solve_bisection(-10, 9)); //Should roughly equal 0.9999942779541016.
             
 
-            /*
-            Numeric n = new Numeric();
-
             //Test is_almost_symmetric, expect success
-            Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 1, 7, 3 }, new double[] { 7, 4, -5 }, new double[] { 3, -5, 6 } });
-            Console.WriteLine("A is_almost_symmetric (expect success): " + n.is_almost_symmetric(B));
+            //Numeric n = new Numeric();
+            //Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 1, 7, 3 }, new double[] { 7, 4, -5 }, new double[] { 3, -5, 6 } });
+            //Console.WriteLine("A is_almost_symmetric (expect success): " + n.is_almost_symmetric(B));
             
-            //Test is_almost_symmetric, expect fail
-            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
-            Console.WriteLine("A is_almost_symmetric (expect fail): " + n.is_almost_symmetric(A));
+            ////Test is_almost_symmetric, expect fail
+            //Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
+            //Console.WriteLine("A is_almost_symmetric (expect fail): " + n.is_almost_symmetric(A));
+            
+            //Test norm(List<double>x, p=1)
+            //Numeric n = new Numeric();
+            //List<double[]> list1 = new List<double[]>() { new double[] { 2 }, new double[] { 3 }, new double[] { 4 } };
+            //List<double[]> list0 = new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 }, new double[] { 7, 8, 9 } };
+            //List<double> list2 = new List<double>( new double[] { 2, 3, 4 } );
+            //List<double[]> list3 = new List<double[]>() { new double[] { 2, 3, 4 } };
+            //Matrix A = Matrix.from_list(list3);
+            //try
+            //{
+            //    Console.WriteLine(Matrix.from_list(list1));
+            //    Console.WriteLine(Matrix.from_list(list3));
+            //    Console.WriteLine("1-norm of list2: " + n.norm(list2, 1));
+            //    Console.WriteLine("2-norm of Matrix " + Matrix.from_list(list0) + ": " + n.norm(Matrix.from_list(list0), 2));
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine("{0} Exception caught.", e.ToString());
+            //}
+                                    
+            ////Test condition_number(Matrix A)
+            //Numeric n = new Numeric();
+            //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } };
+            //try
+            //{
+            //    Console.WriteLine("condition number of Matrix " + Matrix.from_list(list1) + ": " + n.condition_number(Matrix.from_list(list1)));
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine("{0} Exception caught.", e.ToString());
+            //}
+            ////Test condition_number(f, x=None, h=0.000001)
+            //try
+            //{
+            //    MyFunction3 fn = new MyFunction3();
+            //    Console.WriteLine("condition number of function " + fn + ": " + n.condition_number(fn, 1));
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine("{0} Exception caught.", e.ToString());
+            //}
+            
 
-            Console.WriteLine(Math.Pow(10.0, -6) * 7.0);
-            */
+            //Test exp(Matrix A)
+            //Numeric n = new Numeric();
+            //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } };
+            //Console.WriteLine("exp(" + Matrix.from_list(list1) + "): " + n.exp(Matrix.from_list(list1)));
+
+            //Test is_positive_definite(Matrix A)
+            Numeric n = new Numeric();
+            List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 2, 1 } }; //false
+            List<double[]> list2 = new List<double[]>() { new double[] { 2, -1, 0 }, new double[] { -1, 2, -1 }, new double[] { 0, -1, 2 } }; //true
+            Console.WriteLine("is_positive_definite(" + Matrix.from_list(list1) + "), expect false: " + n.exp(Matrix.from_list(list1)));
+            Console.WriteLine("is_positive_definite(" + Matrix.from_list(list2) + "), expect true: " + n.exp(Matrix.from_list(list2)));
+
 
             Console.ReadLine();
         }
