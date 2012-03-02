@@ -497,30 +497,6 @@ namespace MatrixLib
             return A;
         }
 
-        public static Matrix Cholesky(Matrix A)
-        {
-/*
-            if not is_almost_symmetric(A):
-                raise ArithmeticError, 'not symmetric'
-            Matrix L = copy.deepcopy(A);
-            for k in xrange(L.cols):
-                if L[k,k]<=0:
-                    raise ArithmeticError, 'not positive definitive'
-                p = L[k,k] = math.sqrt(L[k,k])
-                for i in xrange(k+1,L.rows):
-                    L[i,k] /= p
-                for j in xrange(k+1,L.rows):
-                    p=float(L[j,k])
-                    for i in xrange(k+1,L.rows):
-                        L[i,j] -= p*L[i,k]
-            for  i in xrange(L.rows):
-                for j in range(i+1,L.cols):
-                    L[i,j]=0
-            return L;
- * */
-            return A;
-        }
-
         public static Matrix operator -(Matrix A, Matrix B)
         /* Override:    Subtraction (-)
          * Purpose:     Subtract two matrices A and B to return matrix M. M[i,j] = A[i,j] - B[i,j]
