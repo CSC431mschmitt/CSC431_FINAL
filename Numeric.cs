@@ -64,11 +64,6 @@ namespace MatrixLib
             return 0.0;
         }
 
-        //class MyFunction : Function
-        //{
-        //    public override double f(double x) { return (x - 2) * (x + 8); }
-        //};
-
         public void solve_fixed_point(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
         /* Function: solve_fixed_point
          * Purpose: 
@@ -91,10 +86,11 @@ namespace MatrixLib
         }
 
         public double solve_bisection(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
-        /* Function: solve_bisection
-         * Purpose: 
+        /* Function:    solve_bisection
+         * Purpose:     Solve f(x) = 0 when function is continuous and is known to change
+         *              sign between x=a and x=b.
          * Parameters: ???Are a and b matrix or double parameters???
-         * Returns: 
+         * Returns:     Approximation for exact solution
          */
         {
             double fa = f(a), fb = f(b), x, fx;
@@ -138,35 +134,64 @@ namespace MatrixLib
             return 0.0;
         }
 
-        public void solve_secant(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
-        /* Function: solve_secant
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+        public double solve_secant(double x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
+        /* Function:    solve_secant
+         * Purpose:     Solves f(x) = 0 when function is differentiable by replacing f'(x) 
+         *              with difference quotient, using the current point and previous 
+         *              point visited in algorithm
+         * Parameters:  x - Initial guess for solution x
+         *              ap - absolute precision
+         *              rp - relative precision
+         *              ns - max number of iterations
+         * Returns:     Approximation for exact solution
          */
         {
+            double fx = f(x);
+            double Dfx = Df(x);
 
-            /* 
-             x = float(x) # make sure it is not int
-            (fx, Dfx) = (f(x), D(f)(x))
-            for k in xrange(ns):
-                if norm(Dfx) < ap:
-                    raise ArithmeticError, 'unstable solution'
-                (x_old, fx_old,x) = (x, fx, x-fx/Dfx)
-                if k>2 and norm(x-x_old)<max(ap,norm(x)*rp): return x
-                fx = f(x)
-                Dfx = (fx-fx_old)/(x-x_old)
-            raise ArithmeticError, 'no convergence'
+            double x_old = 0.0;
+            double fx_old = 0.0;
 
-             */
+            Numeric n = new Numeric();
+
+            try
+            {
+                for (int k = 0; k < ns; k++)
+                {
+                    if (Math.Abs(Dfx) < ap)
+                    {
+                        throw new ArithmeticException("Unstable Solution");
+                    }
+
+                    x_old = x;
+                    fx_old = fx;
+                    x = x - fx / Dfx;
+
+                    if ((k > 2) && (Math.Abs(x - x_old) < Math.Max(ap, Math.Abs(x) * rp)))
+                    {
+                        return x;
+                    }
+
+                    fx = f(x);
+                    Dfx = (fx - fx_old) / (x - x_old);
+                }
+
+                throw new ArithmeticException("No convergence.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return Double.NaN;
         }
 
         public double solve_newton_stabilized(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 20)
-        /* Function: solve_newton_stabilized
-        * Purpose: 
-        * Parameters: 
-        * Returns: 
-        */
+        /* Function:    solve_newton_stabilized
+         * Purpose: 
+         * Parameters: 
+         * Returns:     Approximation for exact solution
+         */
         {
             double fa = f(a), fb = f(b), x, fx, Dfx, x_old, fx_old;
 
@@ -223,10 +248,13 @@ namespace MatrixLib
         }
 
         public double optimize_bisection(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
-        /* Function: optimize_bisection
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+        /* Function:    optimize_bisection
+         * Purpose:     Solve f'(x) = 0 by optimizing bisection solver
+         * Parameters:  a, b - domain for solution x where Df(a) and Df(b) have opposite signs
+         *              ap - absolute precision
+         *              rp - relative precision
+         *              ns - max number of iterations
+         * Returns:     Approximation for exact solution
          */
         {
             double Dfa = Df(a), Dfb = Df(b), x, Dfx;
@@ -270,35 +298,64 @@ namespace MatrixLib
             return 0.0;
         }
 
-        public void optimize_secant(Function f, float x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
-        /* Function: optimize_secant
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+        public double optimize_secant(double x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
+        /* Function:    optimize_secant
+         * Purpose:     Solve f'(x) = 0 by optimizing secant solver
+         * Parameters:  x - Initial guess for solution
+         *              ap - absolute precision
+         *              rp - relative precision
+         *              ns - max number of iterations
+         * Returns:     Approximation for exact solution
          */
         {
-            /* 
-             x = float(x) # make sure it is not int
-            (fx, Dfx, DDfx) = (f(x), D(f)(x), DD(f)(x))
-            for k in xrange(ns):
-                if Dfx==0: return x
-                if norm(DDfx) < ap:
-                    raise ArithmeticError, 'unstable solution'
-                (x_old, Dfx_old, x) = (x, Dfx, x-Dfx/DDfx)
-                if norm(x-x_old)<max(ap,norm(x)*rp): return x
-                fx = f(x)
-                Dfx = D(f)(x)
-                DDfx = (Dfx - Dfx_old)/(x-x_old)
-            raise ArithmeticError, 'no convergence'
-             */
-            
+            double fx = f(x);
+            double Dfx = Df(x);
+            double DDfx = DDf(x);
+
+            double x_old = 0.0;
+            double Dfx_old = 0.0;
+
+            Numeric n = new Numeric();
+
+            try
+            {
+                for (int k = 0; k < ns; k++)
+                {
+                    if (Dfx == 0)
+                        return x;
+
+                    if (Math.Abs(DDfx) < ap)
+                    {
+                        throw new ArithmeticException("Unstable Solution");
+                    }
+
+                    x_old = x;
+                    Dfx_old = Dfx;
+                    x = x - Dfx / DDfx;
+
+                    if ( (Math.Abs(x - x_old) < Math.Max(ap, Math.Abs(x) * rp)))
+                        return x;
+
+                    fx = f(x);
+                    Dfx = Df(x);
+                    DDfx = (Dfx - Dfx_old) / (x - x_old);
+                }
+
+                throw new ArithmeticException("No convergence.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return double.NaN;
         }
 
         public double optimize_newton_stabilized(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 20)
-        /* Function: optimize_newton_stabilized
+        /* Function:    optimize_newton_stabilized
          * Purpose: 
          * Parameters: 
-         * Returns: 
+         * Returns:     Approximation for exact solution
          */
         {
             double Dfa = Df(a), Dfb = Df(b), x, fx, Dfx, DDfx, x_old, fx_old, Dfx_old;
@@ -360,31 +417,61 @@ namespace MatrixLib
             return 0.0;
         }
 
-        public void optimize_golden_search(Function f, double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
-        /* Function: optimize_golden_search
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+        public double optimize_golden_search(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
+        /* Function:    optimize_golden_search
+         * Purpose:     Solve f'(x) = 0 where f(x) is continuous but not differentiable
+         * Parameters:  a, b - Domain in which function is concave or convex
+         *              ap - absolute precision
+         *              rp - relative precision
+         *              ns - max number of iterations
+         * Returns:     Approximation for exact solution
          */
         {
-            /* 
-             a,b=float(a),float(b)
-            tau = (sqrt(5.0)-1.0)/2.0
-            x1, x2 = a+(1.0-tau)*(b-a), a+tau*(b-a)
-            fa, f1, f2, fb = f(a), f(x1), f(x2), f(b)
-            for k in xrange(ns):
-                if f1 > f2:
-                    a, fa, x1, f1 = x1, f1, x2, f2
-                    x2 = a+tau*(b-a)
-                    f2 = f(x2)
-                else:
-                    b, fb, x2, f2 = x2, f2, x1, f1
-                    x1 = a+(1.0-tau)*(b-a)
-                    f1 = f(x1)
-                if k>2 and norm(b-a)<max(ap,norm(b)*rp): return b
-            raise ArithmeticError, 'no convergence'
+            double tau = (Math.Sqrt(5.0) - 1.0)/2.0;
+            double x1 = a + (1.0 - tau) * (b - a);
+            double x2 = a + tau * (b - a);
 
-             */
+            double fa = f(a);
+            double f1 = f(x1);
+            double f2 = f(x2);
+            double fb = f(b);
+
+            try
+            {
+                for (int k = 0; k < ns; k++)
+                {
+                    if (f1 > f2)
+                    {
+                        a = x1;
+                        fa = f1;
+                        x1 = x2;
+                        f1 = f2;
+                        x2 = a + tau * (b - a);
+                        f2 = f(x2);
+                    }
+                    else
+                    {
+                        b = x2;
+                        fb = f2;
+                        x2 = x1;
+                        f2 = f1;
+                        x1 = a + (1.0 - tau) * (b - a);
+                        f1 = f(x1);
+                    }
+
+                    if ( (k > 2) && (Math.Abs(b - a) < Math.Max(ap, Math.Abs(b) * rp)))
+                        return b;
+                }
+
+                throw new ArithmeticException("No Convergence");
+            }
+            
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return double.NaN;
         }
 
         /*
@@ -514,11 +601,11 @@ namespace MatrixLib
     {
         public bool is_almost_symmetric(Matrix A, double ap = 0.000001, double rp = 0.0001)
         /* 
-         * Purpose:     Determine if Matrix A almost symmetric A[i,j] almost equal to A[j, i], within certain precision.
-         * Parameters:  A - Matrix to test for symmetry.
+         * Purpose:     Determine if Matrix A almost symmetric A[i,j] almost equal to A[j, i], within certain precision
+         * Parameters:  A - Matrix to test for symmetry
          *              ap - absolute precision
          *              rp - relative precision
-         * Returns:     True is matrix is almost symmetric, else false
+         * Returns:     True if matrix is almost symmetric, else false
          */
         {
             if (A.rows != A.cols)
@@ -530,14 +617,14 @@ namespace MatrixLib
                 {
                     for (int c = 0; c < r; c++)
                     {
-                        Console.WriteLine("r, c: " + r + "," + c);
-                        Console.WriteLine("A[r, c]: " + A[r, c]);
-                        Console.WriteLine("A[c, r]: " + A[c, r]);
+                        //Console.WriteLine("r, c: " + r + "," + c);
+                        //Console.WriteLine("A[r, c]: " + A[r, c]);
+                        //Console.WriteLine("A[c, r]: " + A[c, r]);
                         double delta = Math.Abs(A[r, c] - A[c, r]);
-                        Console.WriteLine("delta: " + delta);
+                        //Console.WriteLine("delta: " + delta);
                         double abs_arc = Math.Abs(A[r, c]);
                         double abs_acr = Math.Abs(A[c, r]);
-                        Console.WriteLine("Math.Max(abs_arc, abs_acr)*rp: " + Math.Max(abs_arc, abs_acr) * rp);
+                        //Console.WriteLine("Math.Max(abs_arc, abs_acr)*rp: " + Math.Max(abs_arc, abs_acr) * rp);
                         if ((delta > ap) && (delta > Math.Max(abs_arc, abs_acr) * rp))
                             return false;
                     }
@@ -549,11 +636,11 @@ namespace MatrixLib
 
         public bool is_almost_zero(Matrix A, double ap = 0.000001, double rp = 0.0001)
         /* 
-         * Purpose:     Determine if Matrix A is almost zero (what does that mean??)
+         * Purpose:     Determine if Matrix A is zero within a certain precision
          * Parameters:  A - Matrix to test 
          *              ap - absolute precision
          *              rp - relative precision
-         * Returns:     True is matrix is almost zero, else false
+         * Returns:     True if matrix is almost zero, else false
          */
         {
             var result = true;
@@ -575,7 +662,8 @@ namespace MatrixLib
 
         public double norm(List<double> x, int p=1)
         /* 
-         * Purpose:     Compute p-th root of sum of list items each raised to power of p 
+         * Purpose:     Compute p-th root of sum of list items each raised to power of p,
+         *              which represents magnitude of vector
          * Parameters:  x - List of double values 
          *              p - The norm value to compute 
          *              
@@ -593,7 +681,7 @@ namespace MatrixLib
 
         public double norm(Matrix A, int p=1)
         /* 
-         * Purpose:     Compute p-norm of Matrix A
+         * Purpose:     Compute p-norm of Matrix A, which represents magnitude of Matrix
          * Parameters:  A - Matrix
          *              p - The norm value to compute
          * Returns:     p-norm for m x 1 and 1 x n Matrix,
@@ -681,7 +769,7 @@ namespace MatrixLib
          * Parameters:  A - Matrix to test for symmetry.
          *              ap - absolute precision
          *              rp - relative precision
-         *              ns - number of iterations
+         *              ns - max number of iterations
          * Returns:     Matrix exponential for square matrix, else
          *              raises error
          */
@@ -698,18 +786,17 @@ namespace MatrixLib
                     return S;
             }
             
-            throw new ArithmeticException("No convergence.");
+            throw new ArithmeticException("No Convergence.");
         }
 
         public bool is_positive_definite(Matrix A)
         /* 
-         * Purpose:     Compute exponential of Matrix A using series expansion
-         * Parameters:  A - Matrix to test for symmetry.
-         *              ap - absolute precision
-         *              rp - relative precision
-         *              ns - number of iterations
-         * Returns:     Matrix exponential for square matrix, else
-         *              raises error
+         * Purpose:     Check if symmetric Matrix is positive definite 
+         *              based on pass/fail of Cholesky algorithm
+         * Parameters:  A - Matrix to test if positive definite
+         * Returns:     True if Matrix is symmetric and Cholesky 
+         *              algorithm passes, else false
+         *              
          */
         {
             if (!is_almost_symmetric(A))
@@ -728,29 +815,54 @@ namespace MatrixLib
         }
 
         public Matrix Cholesky(Matrix A)
+        /* 
+         * Purpose:     Compute triangular matrix L that satisfies
+         *              A = L*L.t
+         * Parameters:  A - Matrix 
+         * Returns:     True if Matrix is symmetric and Cholesky 
+         *              algorithm passes, else false
+         *              
+         */
         {
-            Matrix L = A.Clone();
-        //
-        //    import copy, math
-        //    if not is_almost_symmetric(A):
-        //        raise ArithmeticError, 'not symmetric'
-        //    L = copy.deepcopy(A)
-        //    for k in xrange(L.cols):
-        //        if L[k,k]<=0:
-        //            raise ArithmeticError, 'not positive definitive'
-        //        p = L[k,k] = math.sqrt(L[k,k])
-        //        for i in xrange(k+1,L.rows):
-        //            L[i,k] /= p
-        //        for j in xrange(k+1,L.rows):
-        //            p=float(L[j,k])
-        //            for i in xrange(k+1,L.rows):
-        //                L[i,j] -= p*L[i,k]
-        //    for  i in xrange(L.rows):
-        //        for j in range(i+1,L.cols):
-        //            L[i,j]=0
-        //    return L
-        
-            return L;
+            try
+            {
+                if (!is_almost_symmetric(A))
+                    throw new ArithmeticException("Matrix is not Symmetric");
+
+                double p = 0.0;
+                Matrix L = A.Clone();
+                for (int k = 0; k < L.cols; k++)
+                {
+                    if (L[k, k] <= 0)
+                        throw new ArithmeticException("Matrix is not Positive Definite");
+
+                    p = L[k, k];
+                    L[k, k] = Math.Sqrt(L[k, k]);
+                    for (int i = k + 1; i < L.rows; i++)
+                    {
+                        L[i, k] /= p;
+                    }
+                    for (int j = k + 1; j < L.rows; j++)
+                    {
+                        p = (double)L[j, k];
+                        for (int i = k + 1; i < L.rows; i++)
+                            L[i, j] -= p * L[i, k];
+                    }
+                }
+                
+                for (int i = 0; i < L.rows; i++)
+                {
+                    for (int j = i + 1; j < L.cols; j++)
+                        L[i, j] = 0;
+                }
+
+                return L;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
         }
         
         /*
