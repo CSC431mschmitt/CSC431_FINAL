@@ -22,6 +22,11 @@ namespace MatrixTester
         public override double f(double x) { return (x * x) - (5.0 * x); }
     };
 
+    class MyFunction4 : Function
+    {
+        public override double f(double x) { return (x - 2) * (x - 5); }
+    };
+
     class Program
     {
         /* This will be for running tests. */
@@ -218,18 +223,39 @@ namespace MatrixTester
             //}
             
 
-            //Test exp(Matrix A)
+            ////Test exp(Matrix A)
             //Numeric n = new Numeric();
             //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } };
             //Console.WriteLine("exp(" + Matrix.from_list(list1) + "): " + n.exp(Matrix.from_list(list1)));
 
-            //Test is_positive_definite(Matrix A)
-            Numeric n = new Numeric();
-            List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 2, 1 } }; //false
-            List<double[]> list2 = new List<double[]>() { new double[] { 2, -1, 0 }, new double[] { -1, 2, -1 }, new double[] { 0, -1, 2 } }; //true
-            Console.WriteLine("is_positive_definite(" + Matrix.from_list(list1) + "), expect false: " + n.exp(Matrix.from_list(list1)));
-            Console.WriteLine("is_positive_definite(" + Matrix.from_list(list2) + "), expect true: " + n.exp(Matrix.from_list(list2)));
+            ////Test is_positive_definite(Matrix A)
+            //Numeric n = new Numeric();
+            //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 2, 1 } }; //false
+            //List<double[]> list2 = new List<double[]>() { new double[] { 2, -1, 0 }, new double[] { -1, 2, -1 }, new double[] { 0, -1, 2 } }; //true
+            //Console.WriteLine("is_positive_definite(" + Matrix.from_list(list1) + "), expect false: " + n.exp(Matrix.from_list(list1)));
+            //Console.WriteLine("is_positive_definite(" + Matrix.from_list(list2) + "), expect true: " + n.exp(Matrix.from_list(list2)));
 
+            ////Test Cholesky and is_almost_zero
+            //Numeric n = new Numeric();
+            //List<double[]> list3 = new List<double[]>() { new double[] { 4, 2, 1 }, new double[] { 2, 9, 3 }, new double[] { 1, 3, 16 } };
+            //Matrix A = Matrix.from_list(list3);
+            //Matrix L = n.Cholesky(A);
+            //Console.WriteLine("Cholesky Matrix: " + L);
+            //Console.WriteLine("is_almost_zero(A - L*L.t), expect true: " + n.is_almost_zero(A - L * L.Transpose()));
+
+            //Test solvers/optimizers
+            MyFunction4 func = new MyFunction4();
+            ////solve_secant
+            //Console.WriteLine("solve_secant(f,1.0), f(x)=(x-2)*(x-5): " + func.solve_secant(1.0)); //2.0
+
+            ////optimize_secant
+            //Console.WriteLine("optimize_secant(f,3.0), f(x)=(x-2)*(x-5): " + func.optimize_secant(1.0)); //3.5
+
+            ////optimize_bisection
+            //Console.WriteLine("optimize_bisection(f,2.0,5.0), f(x)=(x-2)*(x-5): " + func.optimize_bisection(2.0, 5.0)); //3.5
+
+            //optimize_golden_search
+            //Console.WriteLine("optimize_golden_search(f,2.0,5.0), f(x)=(x-2)*(x-5): " + func.optimize_golden_search(2.0, 5.0)); //3.5
 
             Console.ReadLine();
         }
