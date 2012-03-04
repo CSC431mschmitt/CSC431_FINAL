@@ -10,6 +10,31 @@ using System.Text;
  */
 namespace MatrixLib
 {
+    // Basic complex number object that allows you to create and print a complex number.  No operation overloads included.
+    public class ComplexNumber
+    {
+        public double real, imaginary;
+
+        // Constructor
+        public ComplexNumber(double real, double imaginary)
+        {
+            this.real = real;
+            this.imaginary = imaginary;
+        }
+
+        // Print.
+        public override string ToString() 
+        {
+            if (this.imaginary == 0)
+                return string.Format("{0}", real);
+
+            if (this.real == 0)
+                return string.Format("{0}j", imaginary);
+            
+            return string.Format("{0} + {1}j", real, imaginary);
+        }
+    }
+
     public class Function
     {
         public Function() { }
@@ -864,14 +889,12 @@ namespace MatrixLib
                 return null;
             }
         }
-        
+
         /*
         def Markovitz(mu, A, r_free):
             """Assess Markovitz risk/return.
             Example:
-            >>> cov = Matrix.from_list([[0.04, 0.006,0.02],
-            ...                        [0.006,0.09, 0.06],
-            ...                        [0.02, 0.06, 0.16]])
+            >>> cov = Matrix.from_list([[0.04, 0.006,0.02], [0.006,0.09, 0.06], [0.02, 0.06, 0.16]])
             >>> mu = Matrix.from_list([[0.10],[0.12],[0.15]])
             >>> r_free = 0.05
             >>> x, ret, risk = Markovitz(mu, cov, r_free)
@@ -880,72 +903,88 @@ namespace MatrixLib
             >>> print ret, risk
             0.113915... 0.186747...
             """
-            x = Matrix(A.rows, 1)
-            x = (1/A)*(mu - r_free)
-            x = x/sum(x[r,0] for r in range(x.rows))
-            portfolio = [x[r,0] for r in range(x.rows)]
-            portfolio_return = mu*x
-            portfolio_risk = sqrt(x*(A*x))
-            return portfolio, portfolio_return, portfolio_risk
-
-        def fit_least_squares(points, f):
-            """
-            Computes c_j for best linear fit of y[i] \pm dy[i] = fitting_f(x[i])
-            where fitting_f(x[i]) is \sum_j c_j f[j](x[i])
-
-            parameters:
-            - a list of fitting functions
-            - a list with points (x,y,dy)
-
-            returns:
-            - column vector with fitting coefficients
-            - the chi2 for the fit
-            - the fitting function as a lambda x: ....
-            """
-            def eval_fitting_function(f,c,x):
-                if len(f)==1: return c*f[0](x)
-                else: return sum(func(x)*c[i,0] for i,func in enumerate(f))
-            A = Matrix(len(points),len(f))
-            b = Matrix(len(points))
-            for i in range(A.rows):
-                weight = 1.0/points[i][2] if len(points[i])>2 else 1.0
-                b[i,0] = weight*float(points[i][1])
-                for j in range(A.cols):
-                    A[i,j] = weight*f[j](float(points[i][0]))
-            c = (1.0/(A.t*A))*(A.t*b)
-            chi = A*c-b
-            chi2 = norm(chi,2)**2
-            fitting_f = lambda x, c=c, f=f, q=eval_fitting_function: q(f,c,x)
-            return c.data, chi2, fitting_f
-
-             */
-    
-        
-        public double sqrt(double x)
-        /* Function: sqrt
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+         */
+        public static void Markovitz(Matrix mu, Matrix A, double r_free, out double[] portfolio, out double portfolio_return, out double portfolio_risk)
+        /* 
+         * Purpose:     To maximize portfolio expected return for a given amount of portfolio risk and expected return.
+         * Parameters:  mu - Expected return.
+         *              A - Matrix holding weights of each asset.
+         *              r_free - Risk free rate in decimal form.
+         * Returns:     portfolio - The proportion of the total portfolio to devote to each asset.
+         *              portfolio_return - Percent return of the portfolio.
+         *              portfolio_risk - Portfolio return volatility.
          */
         {
-            /*    try:
-                    return math.sqrt(x)
-                except ValueError:
-                    return cmath.sqrt(x)
-             */
-            double a;
+            double sum_rows = 0;
 
-            try
+            Matrix mu_copy = mu.Clone();
+            Matrix x = (1 / A) * (mu_copy - r_free);
+
+            portfolio = new double[x.rows];
+
+            for (int i = 0; i < x.rows; i++)
             {
-                a = Math.Sqrt(x);
+                sum_rows += x[i, 0];
+                portfolio[i] = x[i, 0];
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                a = 0.0;
-            }
-            
-            return a;
+
+            for (int i = 0; i < x.rows; i++)
+                portfolio[i] /= sum_rows;
+
+            x /= sum_rows;
+
+            Matrix port_ret = mu * x;
+            Matrix port_risk = x * (A * x);
+
+            portfolio_return = port_ret[0, 0];
+            portfolio_risk = Math.Sqrt(port_risk[0, 0]);
+        }
+        /*
+
+def fit_least_squares(points, f):
+    """
+    Computes c_j for best linear fit of y[i] \pm dy[i] = fitting_f(x[i])
+    where fitting_f(x[i]) is \sum_j c_j f[j](x[i])
+
+    parameters:
+    - a list of fitting functions
+    - a list with points (x,y,dy)
+
+    returns:
+    - column vector with fitting coefficients
+    - the chi2 for the fit
+    - the fitting function as a lambda x: ....
+    """
+    def eval_fitting_function(f,c,x):
+        if len(f)==1: return c*f[0](x)
+        else: return sum(func(x)*c[i,0] for i,func in enumerate(f))
+    A = Matrix(len(points),len(f))
+    b = Matrix(len(points))
+    for i in range(A.rows):
+        weight = 1.0/points[i][2] if len(points[i])>2 else 1.0
+        b[i,0] = weight*float(points[i][1])
+        for j in range(A.cols):
+            A[i,j] = weight*f[j](float(points[i][0]))
+    c = (1.0/(A.t*A))*(A.t*b)
+    chi = A*c-b
+    chi2 = norm(chi,2)**2
+    fitting_f = lambda x, c=c, f=f, q=eval_fitting_function: q(f,c,x)
+    return c.data, chi2, fitting_f
+
+     */
+
+
+        public static ComplexNumber sqrt(double x)
+        /* Function: sqrt
+         * Purpose: Take the square root of a number.  If the sent value is negative, then an imaginary number is returned.
+         * Parameters: x - The number to take the square root of.
+         * Returns: A complex number object.
+         */
+        {
+            if (x < 0)
+                return new ComplexNumber(0, Math.Sqrt(Math.Abs(x)));
+            else
+                return new ComplexNumber(Math.Sqrt(x), 0);
         }
     }
 }
