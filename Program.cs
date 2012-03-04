@@ -32,36 +32,42 @@ namespace MatrixTester
         /* This will be for running tests. */
         static void Main(string[] args)
         {
-            //Test def from_list(v)
-            //List<double[]> data = new List<double[]>(){new double[]{1}, new double[]{3}};
+            ////Test def from_list(v)
+            //List<double[]> data = new List<double[]>(){new double[]{1, 4, 7}, new double[]{3, 11, 19}};
             //Matrix m_from_list = Matrix.from_list(data);
             //Console.WriteLine("from list: " + m_from_list);
 
             ////Test def as_list(A)
             //List<double[]> m_as_list = m_from_list.as_list();
-            //Console.Write("\t[");
-            //for (int j = 0; j < m_as_list.Count; j++)
+            //List<double[]> m_as_list2 = (m_from_list.Transpose()).data;
+            //Console.Write("[");
+            //for (int j = 0; j < m_as_list2.Count; j++)
             //{
-            //    for (int k = 0; k < m_as_list[j].Length; k++)
+            //    if (j > 0)
+            //        Console.Write(", ");
+
+            //    Console.Write("[");
+            //    double[] values = m_as_list2[j];
+            //    for (int k = 0; k < values.Length; k++)
             //    {
-            //        if (j > 0)
+            //        if (k > 0)
             //            Console.Write(", ");
-            //        Console.Write(String.Format("[{0}]", m_as_list[j][k]));
-            //        k++;
+            //        Console.Write(values[k]);
             //    }
+            //    Console.Write("]");
             //}
             //Console.WriteLine("]");
-            
+
             ////Test def identity(rows)
             //Matrix m_identity = Matrix.identity(3, 1, 0);
             //Console.WriteLine("identity matrix: " + m_identity);
 
             ////Test def diagonol(array[])
             //Matrix m_diagonol = Matrix.diagonal(new double[] { 5, 6, 7, 8 });
-            //Console.WriteLine("diagonol matrix : " +  m_diagonol);
+            //Console.WriteLine("diagonol matrix : " + m_diagonol);
 
             ////Test def row(row_num)
-            //Console.WriteLine( "print row 0 of matrix: " + m_from_list.row(0) );
+            //Console.WriteLine("print row 0 of matrix: " + m_from_list.row(0));
 
             ////Test def row(row_num)
             //Console.WriteLine("print row 1 of matrix: " + m_from_list.row(1));
@@ -117,7 +123,7 @@ namespace MatrixTester
             //Console.WriteLine("B after swap rows: " + B.ToString());
 
             ////Test Transpose property
-            //Matrix A1 = Matrix.from_list( new List<double[]>() { new double[] { 1,2,3 }, new double[] { 4,5,6 } } );
+            //Matrix A1 = Matrix.from_list(new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 } });
             //Console.WriteLine(A1.ToString());
             //Console.WriteLine(A1.Transpose());
 
@@ -221,14 +227,14 @@ namespace MatrixTester
             //{
             //    Console.WriteLine("{0} Exception caught.", e.ToString());
             //}
-            
+
 
             ////Test exp(Matrix A)
             //Numeric n = new Numeric();
             //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } };
             //Console.WriteLine("exp(" + Matrix.from_list(list1) + "): " + n.exp(Matrix.from_list(list1)));
 
-            ////Test is_positive_definite(Matrix A)
+            //Test is_positive_definite(Matrix A)
             //Numeric n = new Numeric();
             //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 2, 1 } }; //false
             //List<double[]> list2 = new List<double[]>() { new double[] { 2, -1, 0 }, new double[] { -1, 2, -1 }, new double[] { 0, -1, 2 } }; //true
@@ -244,7 +250,7 @@ namespace MatrixTester
             //Console.WriteLine("is_almost_zero(A - L*L.t), expect true: " + n.is_almost_zero(A - L * L.Transpose()));
 
             //Test solvers/optimizers
-            MyFunction4 func = new MyFunction4();
+            //MyFunction4 func = new MyFunction4();
             ////solve_secant
             //Console.WriteLine("solve_secant(f,1.0), f(x)=(x-2)*(x-5): " + func.solve_secant(1.0)); //2.0
 
