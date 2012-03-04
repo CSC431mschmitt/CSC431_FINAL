@@ -45,6 +45,12 @@ namespace MatrixLib
 
         public double DDf(double x, double h = 1e-5) { return (f(x + h) - 2.0 * f(x) + f(x - h)) / (h * h); }
 
+        public double g(double x) { return f(x) + x; }
+
+        public double Dg(double x, double h = 1e-5) { return (g(x + h) - g(x - h)) / (2.0 * h); }
+
+        public double DDg(double x, double h = 1e-5) { return (g(x + h) - 2.0 * g(x) + g(x - h)) / (h * h); }
+
         public double solve_newton(double x_guess, double ap = 1e-5, double rp = 1e-4, int ns = 100) {
             
             double x_old, x = x_guess;
@@ -89,25 +95,37 @@ namespace MatrixLib
             return 0.0;
         }
 
-        public void solve_fixed_point(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
+        public double solve_fixed_point(double x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
         /* Function: solve_fixed_point
          * Purpose: 
          * Parameters: 
          * Returns: 
          */
         {
-            /* 
-             def g(x): return f(x)+x # f(x)=0 <=> g(x)=x
-            Dg = D(g)
-            for k in xrange(ns):
-                if abs(Dg(x)) >= 1:
-                    raise ArithmeticError, 'error D(g)(x)>=1'
-                (x_old, x) = (x, g(x))
-                if k>2 and norm(x_old-x)<max(ap,norm(x)*rp):
-                    return x
-            raise ArithmeticError, 'no convergence'
+            //double Dgx = Dg(x), 
+                double old_x;
 
-             */
+            try
+            {
+                for (int k = 0; k < ns; k++)
+                {
+                    if (Math.Abs(Dg(x)) >= 1)
+                        throw new InvalidOperationException("Error D(g)(x) >= 1");
+                    
+                    old_x = x;
+                    x = g(x);
+
+                    if (k > 2 && Math.Abs(old_x - x) < Math.Max(ap, Math.Abs(x) * rp))
+                        return x;
+                }
+                throw new InvalidOperationException("No Convergence");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return 0.0;
         }
 
         public double solve_bisection(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
@@ -499,6 +517,63 @@ namespace MatrixLib
             return double.NaN;
         }
 
+        public double eval_fitting_function(Function[] f, Matrix c, double x)
+        {
+            Matrix return_value;
+            double sums = 0;
+
+            if (f.Length == 1)
+            {
+                return_value = c * f[0].f(x);
+                return return_value[0, 0];
+            }
+            else
+            {
+                for (int i = 0; i < f.Length; i++)
+                    sums += f[i].f(x) * c[i, 0];
+
+                return sums;
+            }
+        }
+
+        //public static void fit_least_squares(double[,] points, Function[] f, out double[] fitting_coef, out double chi2, out Function fitting_f)
+        /* 
+         * Purpose:     Computes c_j for best linear fit of y[i] \pm dy[i] = fitting_f(x[i]) where fitting_f(x[i]) is \sum_j c_j f[j](x[i]).
+         * Parameters:  points - list with points (x,y,dy)
+         * Returns:     fitting_coef - column vector with fitting coefficients
+         *              chi2 - the chi2 for the fit
+         *              fitting_f - The fitting function.
+         */
+        /*
+        { 
+            Matrix A = new Matrix(points.Length, f.Length);
+            Matrix b = new Matrix(points.Length);
+            double weight;
+
+            for (int i = 0; i < A.rows; i++)
+            {
+                if (points[i,].Length > 2)
+                    weight = 1.0 / points[i, 2];
+                else
+                    weight = 1.0;
+
+                b[i, 0] = weight * (float)points[i, 1];
+
+                for (int j = 0; j < A.cols; j++)
+                    A[i, j] = weight * f[j].f((float)points[i, 0]);
+            }
+            Matrix c = (1.0 / (A.Transpose() * A)) * (A.Transpose() * b);
+            Matrix chi = A * c - b;
+
+            fitting_coef = new double[c.cols];
+            for (int j = 0; j < c.cols; j++)
+                    fitting_coef[j] = c[1, j];
+
+            chi2 = Math.Pow(Numeric.norm(chi, 2), 2);
+            fitting_f = null; //lambda x, c=c, f=f, q=eval_fitting_function: q(f,c,x);
+        } */
+        
+
         /*
          *###
          *##### OPTIONAL
@@ -685,7 +760,7 @@ namespace MatrixLib
             return result;
         }
 
-        public double norm(List<double> x, int p=1)
+        public static double norm(List<double> x, int p=1)
         /* 
          * Purpose:     Compute p-th root of sum of list items each raised to power of p,
          *              which represents magnitude of vector
@@ -704,7 +779,7 @@ namespace MatrixLib
             return Math.Pow(sum, 1.0/p);
         }
 
-        public double norm(Matrix A, int p=1)
+        public static double norm(Matrix A, int p=1)
         /* 
          * Purpose:     Compute p-norm of Matrix A, which represents magnitude of Matrix
          * Parameters:  A - Matrix
@@ -890,20 +965,6 @@ namespace MatrixLib
             }
         }
 
-        /*
-        def Markovitz(mu, A, r_free):
-            """Assess Markovitz risk/return.
-            Example:
-            >>> cov = Matrix.from_list([[0.04, 0.006,0.02], [0.006,0.09, 0.06], [0.02, 0.06, 0.16]])
-            >>> mu = Matrix.from_list([[0.10],[0.12],[0.15]])
-            >>> r_free = 0.05
-            >>> x, ret, risk = Markovitz(mu, cov, r_free)
-            >>> print x
-            [0.556634..., 0.275080..., 0.1682847...]
-            >>> print ret, risk
-            0.113915... 0.186747...
-            """
-         */
         public static void Markovitz(Matrix mu, Matrix A, double r_free, out double[] portfolio, out double portfolio_return, out double portfolio_risk)
         /* 
          * Purpose:     To maximize portfolio expected return for a given amount of portfolio risk and expected return.
@@ -939,40 +1000,6 @@ namespace MatrixLib
             portfolio_return = port_ret[0, 0];
             portfolio_risk = Math.Sqrt(port_risk[0, 0]);
         }
-        /*
-
-def fit_least_squares(points, f):
-    """
-    Computes c_j for best linear fit of y[i] \pm dy[i] = fitting_f(x[i])
-    where fitting_f(x[i]) is \sum_j c_j f[j](x[i])
-
-    parameters:
-    - a list of fitting functions
-    - a list with points (x,y,dy)
-
-    returns:
-    - column vector with fitting coefficients
-    - the chi2 for the fit
-    - the fitting function as a lambda x: ....
-    """
-    def eval_fitting_function(f,c,x):
-        if len(f)==1: return c*f[0](x)
-        else: return sum(func(x)*c[i,0] for i,func in enumerate(f))
-    A = Matrix(len(points),len(f))
-    b = Matrix(len(points))
-    for i in range(A.rows):
-        weight = 1.0/points[i][2] if len(points[i])>2 else 1.0
-        b[i,0] = weight*float(points[i][1])
-        for j in range(A.cols):
-            A[i,j] = weight*f[j](float(points[i][0]))
-    c = (1.0/(A.t*A))*(A.t*b)
-    chi = A*c-b
-    chi2 = norm(chi,2)**2
-    fitting_f = lambda x, c=c, f=f, q=eval_fitting_function: q(f,c,x)
-    return c.data, chi2, fitting_f
-
-     */
-
 
         public static ComplexNumber sqrt(double x)
         /* Function: sqrt
