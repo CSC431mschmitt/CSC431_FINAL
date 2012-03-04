@@ -507,6 +507,34 @@ namespace MatrixLib
             return A;
         }
 
+        public static Matrix operator -(Matrix A, double x)
+        /* Override:    Subtraction (-)
+         * Purpose:     Subtract a scalar from each element in matrix A. A[i,j] = A[i,j] - x
+         * Parameters:  A - Matrix.
+         *              x - scalar
+         * Returns:     Resulting matrix after the subtraction operation.
+         */
+        {
+            for (int i = 0; i < A._rows; i++)
+                for (int j = 0; j < A._cols; j++)
+                    A[i, j] -= x;
+            return A;
+        }
+
+        public static Matrix operator +(Matrix A, double x)
+        /* Override:    Addition (+)
+         * Purpose:     Add a scalar to each element in matrix A. A[i,j] = A[i,j] + x
+         * Parameters:  A - Matrix.
+         *              x - scalar
+         * Returns:     Resulting matrix after the addition operation.
+         */
+        {
+            for (int i = 0; i < A._rows; i++)
+                for (int j = 0; j < A._cols; j++)
+                    A[i, j] += x;
+            return A;
+        }
+
         public static Matrix operator -(Matrix A, Matrix B)
         /* Override:    Subtraction (-)
          * Purpose:     Subtract two matrices A and B to return matrix M. M[i,j] = A[i,j] - B[i,j]
