@@ -27,6 +27,11 @@ namespace MatrixTester
         public override double f(double x) { return (x - 2) * (x - 5); }
     };
 
+    class MyFunction5 : Function
+    {
+        public override double f(double x) { return (x - 2) * (x - 5) / 10; }
+    };
+
     class Program
     {
         /* This will be for running tests. */
@@ -288,6 +293,29 @@ namespace MatrixTester
             //Console.WriteLine(Numeric.sqrt(-45.0));
             //Console.WriteLine(Numeric.sqrt(45.0));
             //Console.WriteLine(Numeric.sqrt(45));
+
+            //TEST Norm of Matrix.
+            //Matrix N = Matrix.from_list(new List<double[]>() { new double[] { 3, 5, 7 }, new double[] { 2, 6, 4 }, new double[] { 0, 2, 8 } });
+            //Matrix N2 = Matrix.from_list(new List<double[]>() { new double[] { 2, 4, 2, 1 }, new double[] { 3, 1, 5, 2 }, new double[] { 1, 2, 3, 3 }, new double[] { 0, 6, 1, 2 } });
+            //Console.WriteLine(Numeric.norm(N).ToString());
+            //Console.WriteLine(Numeric.norm(N2).ToString());
+
+            //TEST solve_fixed_point
+            //MyFunction5 f5 = new MyFunction5();
+            //Console.WriteLine(Math.Round(f5.solve_fixed_point(1.0, 0.000001, 0), 4));  //Expecting 2.
+
+            //TEST fit_least_squares
+            double[,] points = new double[100, 3];
+             
+            for (int i = 0; i<100; i++)
+            {
+                points[i, 0] = i;
+                points[i, 1] = 5 + 0.8*i + 0.3*i*i + Math.Sin(i);
+                points[i, 2] = 2;
+            }
+
+            //for (int i = 0; i<10; i++)
+            //    Console.WriteLine(points[90 + i, 0].ToString() + " " + Math.Round(points[90 + i, 1], 2).ToString());
 
             Console.ReadLine();
         }
