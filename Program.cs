@@ -262,6 +262,32 @@ namespace MatrixTester
 
             //optimize_golden_search
             //Console.WriteLine("optimize_golden_search(f,2.0,5.0), f(x)=(x-2)*(x-5): " + func.optimize_golden_search(2.0, 5.0)); //3.5
+            
+            //Test Markowitz function
+            //List<double[]> listMark = new List<double[]>() { new double[] { 0.04, 0.006, 0.02 }, new double[] { 0.006, 0.09, 0.06 }, new double[] { 0.02, 0.06, 0.16 } };
+            //Matrix cov = Matrix.from_list(listMark);
+            //List<double[]> listMu = new List<double[]>() { new double[] { 0.10 }, new double[] { 0.12 }, new double[] { 0.15 } };
+            //Matrix mu = Matrix.from_list(listMu);
+            //double r_free = 0.05, portfolio_return, portfolio_risk;
+            //double[] portfolio;
+            //Numeric.Markovitz(mu, cov, r_free, out portfolio, out portfolio_return, out portfolio_risk);
+            
+            //foreach (double s in portfolio)
+            //    Console.WriteLine(s);
+            //Console.WriteLine("\n" + portfolio_return + "\t" + portfolio_risk);
+
+            // TEST ComplexNumber object and SQRT function.
+            //ComplexNumber c1 = new ComplexNumber(3, 0);
+            //ComplexNumber c2 = new ComplexNumber(0, 4);
+            //ComplexNumber c3 = new ComplexNumber(6, 7);
+            //ComplexNumber c4 = Numeric.sqrt(-9.0);
+            //Console.WriteLine(c1);
+            //Console.WriteLine(c2);
+            //Console.WriteLine(c3);
+            //Console.WriteLine(c4);
+            //Console.WriteLine(Numeric.sqrt(-45.0));
+            //Console.WriteLine(Numeric.sqrt(45.0));
+            //Console.WriteLine(Numeric.sqrt(45));
 
             Console.ReadLine();
         }
