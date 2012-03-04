@@ -574,5 +574,23 @@ namespace MatrixLib
 
             return M;
         }
+
+        public double norm()
+        {
+            double max_value = 0, col_sum;
+            
+            for (int i = 0; i < this.cols; i++)
+            {
+                col_sum = 0;
+                for (int j = 0; j < this.rows; j++)
+                    col_sum += this[j, i];
+
+                if (col_sum > max_value)
+                    max_value = col_sum;
+            }
+
+            return max_value;
+        }
+
     }
 }
