@@ -12,14 +12,11 @@ namespace MatrixLib
 {
     public class Matrix
     {
-        /* ??? should these be public or private ??? */
-        /* make private since do not need to be accessed outside class */
         private int _rows;
         private int _cols;
-        private double[,] _data; /* ??? Does this need to be type Object ??? */ /*I think double type is sufficient*/
-
+        private List<double[]> _data;
         
-        public Matrix(int rows = 1, int cols = 1, double fill = 0.0, bool optimize = false /* ??? What does optimize do ??? */)
+        public Matrix(int rows = 1, int cols = 1, double fill = 0.0, bool optimize = false)
         /* Constructor: Matrix
          * Purpose:     Constructs zero matrix 
          * Parameters:  rows - the integer number of rows
@@ -29,11 +26,17 @@ namespace MatrixLib
         {
             _rows = rows;
             _cols = cols;
-            _data = new double[rows, cols];
+            _data = new List<double[]>();
 
             for (int i = 0; i < rows; i++)
+            {
+                double[] values = new double[cols];
                 for (int j = 0; j < cols; j++)
-                    _data[i, j] = fill;
+                {
+                    values[j] = fill;
+                }
+                _data.Add(values);
+            }
         }
 
         public int rows
@@ -48,10 +51,16 @@ namespace MatrixLib
             set { _cols = value; }
         }
 
+        public List<double[]> data
+        {
+            get { return _data; }
+            
+        }
+
         public double this[int row, int column]
         {
-            get { return _data[row, column]; }
-            set { _data[row, column] = value; }
+            get { return _data[row][column]; }
+            set { _data[row][column] = value; }
         }
 
         public Matrix Transpose()
@@ -99,8 +108,9 @@ namespace MatrixLib
                 values = new double[this._cols];
 
                 for (int c = 0; c < _cols; c++)
+                {
                     values[c] = this[r, c];
-                    
+                }
                 toList.Add(values);
             }
             
@@ -146,7 +156,7 @@ namespace MatrixLib
                 for (int j = 0; j < _cols; j++)
                 {
                     if (j != 0) mFormat += ", ";
-                    mFormat += _data[i, j].ToString();
+                    mFormat += (_data[i][j]).ToString();
                 }
                 mFormat += "]";
             }
@@ -418,7 +428,7 @@ namespace MatrixLib
             {
                 //var ex = new InvalidOperationException("Incompatible Dimensions");
 
-                if ((this._data).Rank != 2) 
+                if ((this._data).Count != 2) 
                 {
                     throw new InvalidOperationException("Incompatible Dimensions");
                 }
