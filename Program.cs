@@ -314,8 +314,8 @@ namespace MatrixTester
                 points[i, 2] = 2;
             }
 
-            //for (int i = 0; i<10; i++)
-            //    Console.WriteLine(points[90 + i, 0].ToString() + " " + Math.Round(points[90 + i, 1], 2).ToString());
+            for (int i = 0; i<10; i++)
+                Console.WriteLine(points[90 + i, 0].ToString() + " " + Math.Round(points[90 + i, 1], 2).ToString());
 
             Console.ReadLine();
         }
