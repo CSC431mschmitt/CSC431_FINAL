@@ -102,8 +102,7 @@ namespace MatrixLib
          * Returns: 
          */
         {
-            //double Dgx = Dg(x), 
-                double old_x;
+            double old_x;
 
             try
             {
