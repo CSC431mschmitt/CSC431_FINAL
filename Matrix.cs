@@ -16,7 +16,7 @@ namespace MatrixLib
         private int _cols;
         private List<double[]> _data;
         
-        public Matrix(int rows = 1, int cols = 1, double fill = 0.0, bool optimize = false)
+        public Matrix(int rows = 1, int cols = 1, double fill = 0.0)
         /* Constructor: Matrix
          * Purpose:     Constructs zero matrix 
          * Parameters:  rows - the integer number of rows
@@ -51,10 +51,19 @@ namespace MatrixLib
             set { _cols = value; }
         }
 
-        public List<double[]> data
+        public double[] data()
         {
-            get { return _data; }
-            
+            List<double> result = new List<double>();
+
+            for (int i = 0; i < _data.Count(); i++)
+            {
+                for (int j = 0; j < _data[i].Count(); j++)
+                {
+                    result.Add(_data[i][j]);
+                }
+            }
+
+            return result.ToArray();
         }
 
         public double this[int row, int column]
@@ -114,6 +123,30 @@ namespace MatrixLib
                 toList.Add(values);
             }
             
+            return toList;
+        }
+
+        public List<double[]> as_()
+        /* 
+         * Purpose:     Convert Matrix to List of double arrays, where each list item represents row in Matrix.
+         * Parameters:  MxN Matrix
+         * Returns:     List representation of Matrix.
+         */
+        {
+            List<double[]> toList = new List<double[]>();
+            double[] values;
+
+            for (int r = 0; r < this._rows; r++)
+            {
+                values = new double[this._cols];
+
+                for (int c = 0; c < _cols; c++)
+                {
+                    values[c] = this[r, c];
+                }
+                toList.Add(values);
+            }
+
             return toList;
         }
 
