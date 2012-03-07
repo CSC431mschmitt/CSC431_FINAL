@@ -32,6 +32,46 @@ namespace MatrixTester
         public override double f(double x) { return (x - 2) * (x - 5) / 10; }
     };
 
+    class MyFunction6 : MultivariateFunction
+    {
+        public override double f(double[] x) { return (2.0 * x[0]) + (3.0 * x[1]) + (5.0 * x[1] * x[2]); }
+    };
+
+    class MyFunction7 : MultivariateFunction
+    {
+        public override double f(double[] x) { return x[0] * x[1] - 2; }
+    };
+
+    class MyFunction8 : MultivariateFunction
+    {
+        public override double f(double[] x) { return x[0] - 3.0 * x[1]*x[1]; }
+    };
+
+    class MyFunction9 : MultivariateFunction
+    {
+        public override double f(double[] x) { return 2.0 * x[0]; }
+    };
+
+    class MyFunction10 : MultivariateFunction
+    {
+        public override double f(double[] x) { return x[0] + x[1]; }
+    };
+
+    class MyFunction11 : MultivariateFunction
+    {
+        public override double f(double[] x) { return x[0] + (x[1] * x[1]) - 2; }
+    };
+
+    class MyFunction12 : MultivariateFunction
+    {
+        public override double f(double[] x) { return -1.0 * ( Math.Pow(x[0] - 2, 2) + Math.Pow(x[1] - 3, 2) ); }
+    };
+
+    class MyFunction13 : MultivariateFunction
+    {
+        public override double f(double[] x) { return Math.Pow(x[0] - 2, 2) + Math.Pow(x[1] - 3, 2); }
+    };
+
     class Program
     {
         /* This will be for running tests. */
@@ -126,6 +166,20 @@ namespace MatrixTester
             //Console.WriteLine("B: " + B.ToString());
             //B.swap_rows(0, 1);
             //Console.WriteLine("B after swap rows: " + B.ToString());
+
+            ////test Matrix.data()
+            //Matrix N2 = Matrix.from_list(new List<double[]>() { new double[] { 2, 4, 2, 1 }, new double[] { 3, 1, 5, 2 }, new double[] { 1, 2, 3, 3 }, new double[] { 0, 6, 1, 2 } });
+            //double[] list = N2.data();
+            //string t = "[";
+            //for (int i = 0; i < list.Count(); i++)
+            //{
+            //    if (i > 0)
+            //        t += ", ";
+
+            //    t += list[i];
+            //}
+            //t += "]";
+            //Console.WriteLine(t);
 
             ////Test Transpose property
             //Matrix A1 = Matrix.from_list(new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 } });
@@ -237,7 +291,7 @@ namespace MatrixTester
             ////Test exp(Matrix A)
             //Numeric n = new Numeric();
             //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } };
-            //Console.WriteLine("exp(" + Matrix.from_list(list1) + "): " + n.exp(Matrix.from_list(list1)));
+            //Console.WriteLine("exp(" + Matrix.from_list(list1) + "): " + exp(Matrix.from_list(list1)));
 
             //Test is_positive_definite(Matrix A)
             //Numeric n = new Numeric();
@@ -268,7 +322,7 @@ namespace MatrixTester
             //optimize_golden_search
             //Console.WriteLine("optimize_golden_search(f,2.0,5.0), f(x)=(x-2)*(x-5): " + func.optimize_golden_search(2.0, 5.0)); //3.5
             
-            //Test Markowitz function
+            ////Test Markowitz function
             //List<double[]> listMark = new List<double[]>() { new double[] { 0.04, 0.006, 0.02 }, new double[] { 0.006, 0.09, 0.06 }, new double[] { 0.02, 0.06, 0.16 } };
             //Matrix cov = Matrix.from_list(listMark);
             //List<double[]> listMu = new List<double[]>() { new double[] { 0.10 }, new double[] { 0.12 }, new double[] { 0.15 } };
@@ -281,7 +335,7 @@ namespace MatrixTester
             //    Console.WriteLine(s);
             //Console.WriteLine("\n" + portfolio_return + "\t" + portfolio_risk);
 
-            // TEST ComplexNumber object and SQRT function.
+            //// TEST ComplexNumber object and SQRT function.
             //ComplexNumber c1 = new ComplexNumber(3, 0);
             //ComplexNumber c2 = new ComplexNumber(0, 4);
             //ComplexNumber c3 = new ComplexNumber(6, 7);
@@ -294,28 +348,80 @@ namespace MatrixTester
             //Console.WriteLine(Numeric.sqrt(45.0));
             //Console.WriteLine(Numeric.sqrt(45));
 
-            //TEST Norm of Matrix.
+            ////TEST Norm of Matrix.
             //Matrix N = Matrix.from_list(new List<double[]>() { new double[] { 3, 5, 7 }, new double[] { 2, 6, 4 }, new double[] { 0, 2, 8 } });
             //Matrix N2 = Matrix.from_list(new List<double[]>() { new double[] { 2, 4, 2, 1 }, new double[] { 3, 1, 5, 2 }, new double[] { 1, 2, 3, 3 }, new double[] { 0, 6, 1, 2 } });
             //Console.WriteLine(Numeric.norm(N).ToString());
             //Console.WriteLine(Numeric.norm(N2).ToString());
 
-            //TEST solve_fixed_point
+            ///TEST solve_fixed_point
             //MyFunction5 f5 = new MyFunction5();
             //Console.WriteLine(Math.Round(f5.solve_fixed_point(1.0, 0.000001, 0), 4));  //Expecting 2.
 
-            //TEST fit_least_squares
-            double[,] points = new double[100, 3];
+            ////TEST fit_least_squares
+            //double[,] points = new double[100, 3];
              
-            for (int i = 0; i<100; i++)
-            {
-                points[i, 0] = i;
-                points[i, 1] = 5 + 0.8*i + 0.3*i*i + Math.Sin(i);
-                points[i, 2] = 2;
-            }
+            //for (int i = 0; i<100; i++)
+            //{
+            //    points[i, 0] = i;
+            //    points[i, 1] = 5 + 0.8*i + 0.3*i*i + Math.Sin(i);
+            //    points[i, 2] = 2;
+            //}
 
-            for (int i = 0; i<10; i++)
-                Console.WriteLine(points[90 + i, 0].ToString() + " " + Math.Round(points[90 + i, 1], 2).ToString());
+            //for (int i = 0; i<10; i++)
+            //    Console.WriteLine(points[90 + i, 0].ToString() + " " + Math.Round(points[90 + i, 1], 2).ToString());
+
+            ////Test partial
+            //MyFunction6 f6 = new MyFunction6();
+            //double[] x = new double[] {1, 1, 1};
+            //double df0 = f6.partial(x, 0);
+            //double df1 = f6.partial(x, 1);
+            //double df2 = f6.partial(x, 2);
+            //Console.WriteLine("partial df0: " + Math.Round(df0, 4)); //2.0
+            //Console.WriteLine("partial df1: " + Math.Round(df1, 4)); //8.0
+            //Console.WriteLine("partial df2: " + Math.Round(df2, 4)); //5.0
+
+            ////test jacobian
+            //MultivariateFunction multi = new MultivariateFunction();
+            //List<MultivariateFunction> fs = new List<MultivariateFunction>() { new MyFunction6(), new MyFunction9() } ;
+            //double[] y = new double[] { 1, 1, 1 };
+            //Console.WriteLine("jacobian(fs, x=[1,1,1]): " + multi.jacobian(fs, y) ); //[[1.9999999..., 7.999999..., 4.9999999...], [1.9999999..., 0.0, 0.0]]
+
+            ////test gradient
+            //MyFunction6 f6 = new MyFunction6();
+            //double[] x = new double[] {1, 1, 1};
+            //Console.WriteLine("gradient (f, x=[1, 1, 1]): " + f6.gradient(x) ); //[[1.999999...], [7.999999...], [4.999999...]]
+            
+            ////test hessian
+            //MyFunction6 f6 = new MyFunction6();
+            //double[] x = new double[] { 1, 1, 1 };
+            //Console.WriteLine("hessian (f, x=[1, 1, 1]): " + f6.hessian(x) ); //[[0.0, 0.0, 0.0], [0.0, 0.0, 5.000000...], [0.0, 5.000000..., 0.0]]
+
+            ////test solve_newton_multi
+            //MultivariateFunction multi = new MultivariateFunction();
+            //List<MultivariateFunction> fs1 = new List<MultivariateFunction>() { new MyFunction7(), new MyFunction8() };
+            //double[] x = new double[] { 1, 1 };
+            //double[] result = multi.solve_newton_multi(fs1, x);
+            //Console.WriteLine("solve_newton_multi(fs, x=[1, 1]: [" + result[0] + ", " + result[1] + "]"); //[2.2894284851066793, 0.87358046473632422]
+
+            //List<MultivariateFunction> fs2 = new List<MultivariateFunction>() { new MyFunction10(), new MyFunction11() };
+            //double[] y = new double[] { 0, 0 };
+            //double[] result2 = multi.solve_newton_multi(fs2, y);
+            //Console.WriteLine("solve_newton_multi(fs2, x=[0, 0]: [" + result2[0] + ", " + result2[1] + "]");//[1.0000000006984919, -1.0000000006984919]
+            //y = new double[] { 1, 1 };
+            //result2 = multi.solve_newton_multi(fs2, y);
+            //Console.WriteLine("solve_newton_multi(fs2, x=[1, 1]: [" + result2[0] + ", " + result2[1] + "]");//[-2.0000000006984919, 2.0000000006984919]     
+
+            //test optimize_newton_multi
+            //MyFunction12 f12 = new MyFunction12();
+            //double[] x = new double[] { 0, 0 };
+            //double[] result = f12.optimize_newton_multi(x);
+            //Console.WriteLine("optimize_newton_multi(fs, x=[0, 0]: [" + result[0] + ", " + result[1] + "]"); //[2.0, 3.0] maximum
+
+            //MyFunction13 f13 = new MyFunction13();
+            //double[] y = new double[] { 0, 0 };
+            //double[] result2 = f13.optimize_newton_multi(y);
+            //Console.WriteLine("optimize_newton_multi(fs, x=[0, 0]: [" + result2[0] + ", " + result2[1] + "]"); //[2.0, 3.0] minimum
 
             Console.ReadLine();
         }
