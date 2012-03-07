@@ -22,7 +22,7 @@ namespace MatrixLib
             this.imaginary = imaginary;
         }
 
-        // Print.
+        // Print
         public override string ToString() 
         {
             if (this.imaginary == 0)
@@ -32,6 +32,234 @@ namespace MatrixLib
                 return string.Format("{0}j", imaginary);
             
             return string.Format("{0} + {1}j", real, imaginary);
+        }
+    }
+
+    public class MultivariateFunction
+    /*
+     *###
+     *##### OPTIONAL
+     *###
+     */
+    {
+        public MultivariateFunction() { }
+
+        public virtual double f(double[] x) { return 0; }
+
+        public double partial(double[] x, int i, double h = 0.01) 
+        /* Function: jacobian
+         * Purpose: 
+         * Parameters: 
+         * Returns: 
+         */
+        {
+            double[] x_plus = (double[])x.Clone();
+            double[] x_minus = (double[])x.Clone();
+
+            x_plus[i] += h;
+            x_minus[i] -= h;
+
+            return (f(x_plus) - f(x_minus)) / (2.0 * h);
+        }
+
+        public Matrix jacobian(List<MultivariateFunction> fs, double[] x, double h = 0.0001)
+        /* Function: jacobian
+         * Purpose: 
+         * Parameters: 
+         * Returns: 
+         */
+        {
+            Matrix M = new Matrix(fs.Count, x.Count());
+
+            try
+            {
+                for (int r = 0; r < M.rows; r++)
+                {
+                    for (int c = 0; c < M.cols; c++)
+                    {
+                        M[r, c] = fs[r].partial(x, c);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return M;
+        }
+
+        public Matrix hessian(double[] x, double h = 0.001)
+        /* Function: hessian
+         * Purpose: 
+         * Parameters: 
+         * Returns: 
+         */
+        {
+            Matrix M = new Matrix(x.Count(), x.Count());
+
+            try
+            {
+                for (int r = 0; r < M.rows; r++)
+                {
+                    for (int c = 0; c < M.cols; c++)
+                    {
+                        double[] x_plus = (double[])x.Clone();
+                        double[] x_minus = (double[])x.Clone();
+
+                        x_plus[c] += h;
+                        double F_plus = partial(x_plus, r);
+                        x_minus[c] -= h;
+                        double F_minus = partial(x_minus, r);
+
+                        M[r, c] = (F_plus - F_minus) / (2.0 * h);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return M;
+        }
+
+        public Matrix gradient(double[] x, double h = 0.0001)
+        /* Function: gradient
+         * Purpose: 
+         * Parameters: 
+         * Returns: 
+         */
+        {
+            Matrix M = new Matrix(x.Count());
+
+            for (int r = 0; r < M.rows; r++)
+            {
+                for (int c = 0; c < M.cols; c++)
+                {
+                    M[r, c] = partial(x, r);
+                }
+            }
+
+            return M;
+        }
+
+        public double[] solve_newton_multi(List<MultivariateFunction> fs, double[] x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
+        /* Function:    solve_newton_multi
+         * Purpose:     Computes the root of a multidimensional function fs near point x 
+         * Parameters:  fs - Multidimensional function that takes an array and returns a scalar
+         *              x - Array
+         *              ap - Absolute precision
+         *              rp - Relative precision
+         *              ns - Max number of iterations
+         * Returns:     Solution of f(x)=0 as a array
+         */
+        {
+            Matrix x_t = Matrix.from_list(new List<double[]> { x }).Transpose();
+
+            try
+            {
+                for (int k = 0; k < ns; k++)
+                {
+                    int n = (x_t.data()).Length;
+
+                    double[] fsx_list = new double[n];
+                    //Console.WriteLine("x_t.data()=" + x_t.data()[0] + ", " + x_t.data()[1]);
+                    for (int i = 0; i < fs.Count(); i++)
+                    {
+                        fsx_list[i] = fs[i].f(x_t.data());
+                    }
+                    Matrix fsx = Matrix.from_list(new List<double[]> { fsx_list }).Transpose();
+                    //Console.WriteLine("k=" + k + " fsx=" + fsx);
+
+                    Matrix J = jacobian(fs, x_t.data());
+
+                    Matrix x_old = x_t;
+
+                    x_t = x_t - (1.0 / J) * fsx;
+
+                    if (Numeric.norm(x_t - x_old) < (Math.Max(ap, rp * Numeric.norm(x_t))))
+                    {
+                        return x_t.data();
+                    }
+                }
+                
+                throw new ArithmeticException("No Convergence");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return null;
+        }
+
+        public double[] optimize_newton_multi(double[] x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
+        /* Function:    solve_secant
+         * Purpose:     Finds extreme of multidimensional function fs near point x 
+         * Parameters:  fs - Multidimensional function that takes an array and returns scalar
+         *              x - Array
+         *              ap - Absolute precision
+         *              rp - Relative precision
+         *              ns - Max number of iterations
+         * Returns:     Solution of f'(x) = 0 as an array and indicates if max or min
+         */
+        {
+            Matrix x_t = Matrix.from_list(new List<double[]> { x }).Transpose();
+
+            try
+            {
+                for (int k = 0; k < ns; k++)
+                {
+                    int n = x.Length;
+
+                    double[] fsx_list = new double[n];
+
+                    //Console.WriteLine("x_t.data()=" + x_t.data()[0] + ", " + x_t.data()[1]);
+                    for (int i = 0; i < n; i++)
+                    {
+                        fsx_list[i] = partial(x_t.data(), i);
+                    }
+                    Matrix fsx = Matrix.from_list(new List<double[]> { fsx_list }).Transpose();
+                    //Console.WriteLine("k=" + k + " fsx=" + fsx);
+
+                    Matrix H = hessian(x_t.data());
+                    //Console.WriteLine("k=" + k + " H=" + H);
+
+                    Matrix x_old = x_t;
+
+                    x_t = x_t - (1.0 / H) * fsx;
+
+                    if (Numeric.norm(x_t - x_old) < (Math.Max(ap, rp * Numeric.norm(x_t))))
+                    {
+                        Numeric numeric = new Numeric();
+                        try
+                        {
+                            if (numeric.Cholesky(H) == null)
+                            {
+                                if (numeric.Cholesky(-H) != null)
+                                    Console.WriteLine("maximum");
+                            }
+                            else
+                                Console.WriteLine("minimum");
+                        }
+                        catch (Exception ex) 
+                        {
+                            Console.WriteLine(ex.ToString());
+                        }
+
+                        return x_t.data();
+                    }
+                }
+
+                throw new ArithmeticException("No Convergence");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return null;
         }
     }
 
@@ -571,129 +799,6 @@ namespace MatrixLib
             chi2 = Math.Pow(Numeric.norm(chi, 2), 2);
             fitting_f = null; //lambda x, c=c, f=f, q=eval_fitting_function: q(f,c,x);
         } */
-        
-
-        /*
-         *###
-         *##### OPTIONAL
-         *###
-         */
-        public void partial(Function f, int i, double h = 0.0001)
-        /* Function: 
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
-         */
-        {
-            /* 
-            def df(x,f=f,i=i,h=h):
-            u = f([e+(h if i==j else 0) for j,e in enumerate(x)])
-            w = f([e-(h if i==j else 0) for j,e in enumerate(x)])
-            try:
-                return (u-w)/2/h
-            except TypeError:
-                return [(u[i]-w[i])/2/h for i in range(len(u))]
-            return df
-             */
-        }
-
-        public void gradient(Function f, double x, double h = 0.0001)
-        /* Function: gradient
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
-         */
-        {
-            /* 
-             return Matrix(len(x),fill=lambda r,c: partial(f,r,h)(x))
-             */
-        }
-
-        public void hessian(Function f, double x, double h = 0.0001)
-        /* Function: hessian
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
-         */
-        {
-            /* 
-             return Matrix(len(x),len(x),fill=lambda r,c: partial(partial(f,r,h),c,h)(x))
-*/
-        }
-
-
-        public void jacobian(Function f, double x, double h = 0.0001)
-        /* Function: jacobian
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
-         */
-        {
-            /* 
-             partials = [partial(f,c,h)(x) for c in xrange(len(x))]
-            return Matrix(len(partials[0]),len(x),fill=lambda r,c: partials[c][r])
-
-             */
-        }
-
-        public void solve_newton_multi(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
-        /* Function: solve_newton_multi
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
-         */
-        {
-            /* 
-             """
-            Computes the root of a multidimensional function f near point x.
-
-            Parameters
-            f is a function that takes a list and returns a scalar
-            x is a list
-
-            Returns x, solution of f(x)=0, as a list
-            """
-            x = Matrix.from_list([x]).t
-            fx = Matrix.from_list([f(x.data)]).t
-            for k in xrange(ns):
-                (fx.data, J) = (f(x.data), jacobian(f,x.data))
-                if norm(J) < ap:
-                    raise ArithmeticError, 'unstable solution'
-                (x_old, x) = (x, x-(1.0/J)*fx)
-                if k>2 and norm(x-x_old)<max(ap,norm(x)*rp): return x.data
-            raise ArithmeticError, 'no convergence'
-
-             */
-        }
-
-        public void optimize_newton_multi(Function f, double x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
-        /* Function: solve_secant
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
-         */
-        {
-            /* 
-             """
-            Finds the extreme of multidimensional function f near point x.
-
-            Parameters
-            f is a function that takes a list and returns a scalar
-            x is a list
-
-            Returns x, which maximizes of minimizes f(x)=0, as a list
-            """
-            x = Matrix.from_list([x]).t
-            for k in xrange(ns):
-                (grad,H) = (gradient(f,x.data), hessian(f,x.data))
-                if norm(H) < ap:
-                    raise ArithmeticError, 'unstable solution'
-                (x_old, x) = (x, x-(1.0/H)*grad)
-                if k>2 and norm(x-x_old)<max(ap,norm(x)*rp): return x.data
-            raise ArithmeticError, 'no convergence'
-
-             */
-        }
     }
     
     public class Numeric
