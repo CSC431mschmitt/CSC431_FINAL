@@ -463,6 +463,7 @@ namespace MatrixLib
 
                 if ((this._data).Count != 2) 
                 {
+                    Console.WriteLine((this._data).Count);
                     throw new InvalidOperationException("Incompatible Dimensions");
                 }
 
