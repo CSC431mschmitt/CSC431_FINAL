@@ -265,9 +265,39 @@ namespace MatrixLib
 
     public class Function
     {
+        public Function[] func;
+        public Matrix c;
+
         public Function() { }
+        public Function(Function[] func, Matrix c) { this.func = func; this.c = c;  }
 
         public virtual double f(double x) { return 0 * x; }
+
+        public double eval_fitting_function(double x)
+        {
+            Matrix return_value;
+            double sums = 0;
+
+            if (func.Length == 1)
+            {
+                return_value = c * func[0].f(x);
+                return return_value[0, 0];
+            }
+            else
+            {
+                for (int i = 0; i < func.Length; i++)
+                    sums += func[i].f(x) * c[i, 0];
+                return sums;
+            }
+        }
+
+        public virtual double polynomial(double x, int n)
+        {
+            double return_val = 0;
+            for (int i = 1; i <= n; i++)
+                return_val += Math.Pow(x, i);
+            return return_val;
+        }
 
         public double Df(double x, double h = 1e-5) { return (f(x + h) - f(x - h)) / (2.0 * h); }
 
@@ -744,26 +774,7 @@ namespace MatrixLib
             return double.NaN;
         }
 
-        public double eval_fitting_function(Function[] f, Matrix c, double x)
-        {
-            Matrix return_value;
-            double sums = 0;
-
-            if (f.Length == 1)
-            {
-                return_value = c * f[0].f(x);
-                return return_value[0, 0];
-            }
-            else
-            {
-                for (int i = 0; i < f.Length; i++)
-                    sums += f[i].f(x) * c[i, 0];
-
-                return sums;
-            }
-        }
-
-        //public static void fit_least_squares(double[,] points, Function[] f, out double[] fitting_coef, out double chi2, out Function fitting_f)
+        public static void fit_least_squares(double[,] points, Function[] f, out double[] fitting_coef, out double chi2, out Function fitting_f)
         /* 
          * Purpose:     Computes c_j for best linear fit of y[i] \pm dy[i] = fitting_f(x[i]) where fitting_f(x[i]) is \sum_j c_j f[j](x[i]).
          * Parameters:  points - list with points (x,y,dy)
@@ -771,34 +782,34 @@ namespace MatrixLib
          *              chi2 - the chi2 for the fit
          *              fitting_f - The fitting function.
          */
-        /*
-        { 
-            Matrix A = new Matrix(points.Length, f.Length);
-            Matrix b = new Matrix(points.Length);
+        {
+            Matrix A = new Matrix(points.GetUpperBound(0)+1, f.Length);
+            Matrix b = new Matrix(points.GetUpperBound(0)+1);
             double weight;
 
             for (int i = 0; i < A.rows; i++)
             {
-                if (points[i,].Length > 2)
+                if (points.GetUpperBound(1)+1 > 2)
                     weight = 1.0 / points[i, 2];
                 else
                     weight = 1.0;
 
-                b[i, 0] = weight * (float)points[i, 1];
+                b[i, 0] = (double)weight * (float)points[i, 1];
 
                 for (int j = 0; j < A.cols; j++)
                     A[i, j] = weight * f[j].f((float)points[i, 0]);
             }
+
             Matrix c = (1.0 / (A.Transpose() * A)) * (A.Transpose() * b);
             Matrix chi = A * c - b;
-
             fitting_coef = new double[c.cols];
+
             for (int j = 0; j < c.cols; j++)
-                    fitting_coef[j] = c[1, j];
+                    fitting_coef[j] = c[0, j];
 
             chi2 = Math.Pow(Numeric.norm(chi, 2), 2);
-            fitting_f = null; //lambda x, c=c, f=f, q=eval_fitting_function: q(f,c,x);
-        } */
+            fitting_f = new Function(f, c);
+        } 
     }
     
     public class Numeric
