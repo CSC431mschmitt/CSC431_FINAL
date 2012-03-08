@@ -72,6 +72,21 @@ namespace MatrixTester
         public override double f(double[] x) { return Math.Pow(x[0] - 2, 2) + Math.Pow(x[1] - 3, 2); }
     };
 
+    class Quadratic0 : Function
+    {
+        public override double f(double x) { return Math.Pow(x, 0); }
+    };
+
+    class Quadratic1 : Function
+    {
+        public override double f(double x) { return Math.Pow(x, 1); }
+    };
+
+    class Quadratic2 : Function
+    {
+        public override double f(double x) { return Math.Pow(x, 2); }
+    };
+
     class Program
     {
         /* This will be for running tests. */
@@ -358,19 +373,6 @@ namespace MatrixTester
             //MyFunction5 f5 = new MyFunction5();
             //Console.WriteLine(Math.Round(f5.solve_fixed_point(1.0, 0.000001, 0), 4));  //Expecting 2.
 
-            ////TEST fit_least_squares
-            //double[,] points = new double[100, 3];
-             
-            //for (int i = 0; i<100; i++)
-            //{
-            //    points[i, 0] = i;
-            //    points[i, 1] = 5 + 0.8*i + 0.3*i*i + Math.Sin(i);
-            //    points[i, 2] = 2;
-            //}
-
-            //for (int i = 0; i<10; i++)
-            //    Console.WriteLine(points[90 + i, 0].ToString() + " " + Math.Round(points[90 + i, 1], 2).ToString());
-
             ////Test partial
             //MyFunction6 f6 = new MyFunction6();
             //double[] x = new double[] {1, 1, 1};
@@ -422,6 +424,36 @@ namespace MatrixTester
             //double[] y = new double[] { 0, 0 };
             //double[] result2 = f13.optimize_newton_multi(y);
             //Console.WriteLine("optimize_newton_multi(fs, x=[0, 0]: [" + result2[0] + ", " + result2[1] + "]"); //[2.0, 3.0] minimum
+
+            //TEST fit_least_squares
+            //  Expecting:
+            //   90 2507.89 2506.98
+            //   91 2562.21 2562.08
+            //   92 2617.02 2617.78
+            //   93 2673.15 2674.08
+            //   94 2730.75 2730.98
+            //   95 2789.18 2788.48
+            //   96 2847.58 2846.58
+            //   97 2905.68 2905.28
+            //   98 2964.03 2964.58
+            //   99 3023.5 3024.48
+            //double[,] points = new double[100, 3];
+            //Function[] f = new Function[3] { new Quadratic0(), new Quadratic1(), new Quadratic2() } ;
+            //double[] fitting_coef;
+            //double chi2;
+            //Function fitting_f;
+             
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    points[i, 0] = i;
+            //    points[i, 1] = 5 + 0.8*i + 0.3*i*i + Math.Sin(i);
+            //    points[i, 2] = 2;
+            //}
+
+            //Function.fit_least_squares(points, f, out fitting_coef, out chi2, out fitting_f);
+
+            //for (int i = 90; i < 100; i++)
+            //    Console.WriteLine(points[i, 0] + "\t" + Math.Round(points[i, 1], 2) + "\t" + Math.Round(fitting_f.eval_fitting_function(points[i, 0]), 2));
 
             Console.ReadLine();
         }
