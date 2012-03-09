@@ -461,11 +461,14 @@ namespace MatrixLib
             {
                 //var ex = new InvalidOperationException("Incompatible Dimensions");
 
-                if ((this._data).Count != 2) 
+                if ( (this._rows == 1) || (this._cols == 1) )
+
                 {
-                    Console.WriteLine((this._data).Count);
+
                     throw new InvalidOperationException("Incompatible Dimensions");
+
                 }
+             
 
                 else if ((i >= this._rows) || (j >= this._rows))
                 {
