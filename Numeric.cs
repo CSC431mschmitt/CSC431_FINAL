@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
 /*
  * This code is distributed under the BSD license, and it is a rewrite of
  * code shared in CSC431 class at DePaul University by Massimo Di Pierro.
@@ -15,15 +14,23 @@ namespace MatrixLib
     {
         public double real, imaginary;
 
-        // Constructor
         public ComplexNumber(double real, double imaginary)
+        /* Constructor: ComplexNumber
+         * Purpose:     Constructs complex number object of form a + bj. 
+         * Parameters:  real -  real part of the complex number
+         *              imaginary - imaginary part of the complex number
+         */
         {
             this.real = real;
             this.imaginary = imaginary;
         }
 
-        // Print
-        public override string ToString() 
+        public override string ToString()
+        /* Override:    ToString
+         * Purpose:     Prints out the full string of an imaginary number in the format a + bj.
+         * Parameters:  None
+         * Returns:     String representation of imaginary number
+         */
         {
             if (this.imaginary == 0)
                 return string.Format("{0}", real);
@@ -274,6 +281,11 @@ namespace MatrixLib
         public virtual double f(double x) { return 0 * x; }
 
         public double eval_fitting_function(double x)
+        /* Function:    eval_fitting_function
+         * Purpose:     Evaluates all fitting functions about a sent parameter x.
+         * Parameters:  x - value to evaluate the functions about.
+         * Returns:     The sum of all resulting function values.
+         */
         {
             Matrix return_value;
             double sums = 0;
@@ -291,14 +303,6 @@ namespace MatrixLib
             }
         }
 
-        public virtual double polynomial(double x, int n)
-        {
-            double return_val = 0;
-            for (int i = 1; i <= n; i++)
-                return_val += Math.Pow(x, i);
-            return return_val;
-        }
-
         public double Df(double x, double h = 1e-5) { return (f(x + h) - f(x - h)) / (2.0 * h); }
 
         public double DDf(double x, double h = 1e-5) { return (f(x + h) - 2.0 * f(x) + f(x - h)) / (h * h); }
@@ -309,7 +313,16 @@ namespace MatrixLib
 
         public double DDg(double x, double h = 1e-5) { return (g(x + h) - 2.0 * g(x) + g(x - h)) / (h * h); }
 
-        public double solve_newton(double x_guess, double ap = 1e-5, double rp = 1e-4, int ns = 100) {
+        public double solve_newton(double x_guess, double ap = 1e-5, double rp = 1e-4, int ns = 100)
+        /* Function:    solve_newton
+         * Purpose:     Finds the approximation of the root of a function to the precision specified using successive closer guesses.
+         * Parameters:  x_guess - initial guess of the root to use as evaluation starting point.
+         *              ap - absolute precision of solution 
+         *              rp - relative precision of solution
+         *              ns - max number of steps to iterate before concluding the function does not converge
+         * Returns:     The best approximation of the root of the function.
+         */
+        {
             
             double x_old, x = x_guess;
             
