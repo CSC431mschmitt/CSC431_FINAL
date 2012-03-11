@@ -43,7 +43,8 @@ namespace MatrixLib
     }
 
     public class MultivariateFunction
-    /*
+    /* Multivariate function object that allows us to work with functions of multiple 
+     * variables and handles dealing with partial derivatives.
      *###
      *##### OPTIONAL
      *###
@@ -51,13 +52,18 @@ namespace MatrixLib
     {
         public MultivariateFunction() { }
 
+        /* Returns multivariate function f(x_0, x_1,...,x_n) */
         public virtual double f(double[] x) { return 0; }
 
-        public double partial(double[] x, int i, double h = 0.01) 
-        /* Function: jacobian
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+        public double partial(double[] x, int i, double h = 0.01)
+        /* Function:    partial
+         * Purpose:     Find partial derivate of function f with respect to x_i.
+         * Parameters:  x - Array of variable values, x=(x_0, x_1, x_2,...)
+         *              i - Index for array x indicating which variable or dimension
+         *                  for which we want to compute the partial derivative
+         *              h - Small value to indicate change in x_i dimension
+         * Returns:     Returns scalar value of partial derivative of f with respect
+         *              to x_i.
          */
         {
             double[] x_plus = (double[])x.Clone();
@@ -70,10 +76,15 @@ namespace MatrixLib
         }
 
         public Matrix jacobian(List<MultivariateFunction> fs, double[] x, double h = 0.0001)
-        /* Function: jacobian
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+        /* Function:    jacobian
+         * Purpose:     Compute matrix of all possible partial derivatives for all
+         *              functions in fs. 
+         *              Row index specifies the function to evaluate.  
+         *              Column index specifies index for computing partial derivative.
+         * Parameters:  fs - List of multivariate functions
+         *              x - Array of variable values, x=(x_0, x_1, x_2,...)
+         *              h - Small value to indicate change in x_i dimension
+         * Returns:     Matrix of partial derivatives 
          */
         {
             Matrix M = new Matrix(fs.Count, x.Count());
@@ -97,10 +108,13 @@ namespace MatrixLib
         }
 
         public Matrix hessian(double[] x, double h = 0.001)
-        /* Function: hessian
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+        /* Function:    hessian
+         * Purpose:     Compute Jacobian matrix of partial derivatives of 
+         *              function f(x_0, x_1,...,x_n) with respect to 
+         *              x_0, x_1,...,x_n.
+         * Parameters:  x - Array of variable values, x=(x_0, x_1, x_2,...)
+         *              h - Small value to indicate change in x_i dimension 
+         * Returns:     Matrix of second-order partial derivatives of function, f.
          */
         {
             Matrix M = new Matrix(x.Count(), x.Count());
@@ -132,10 +146,12 @@ namespace MatrixLib
         }
 
         public Matrix gradient(double[] x, double h = 0.0001)
-        /* Function: gradient
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+        /* Function:    gradient
+         * Purpose:     Compute partial derivate of function f
+         *              with respect to x_0, x_1,...x_n.
+         * Parameters:  x - Array of variable values, x=(x_0, x_1, x_2,...)
+         *              h - Small value to indicate change in x_i dimension
+         * Returns:     Mx1 matrix of partial derivatives of function f.  
          */
         {
             Matrix M = new Matrix(x.Count());
