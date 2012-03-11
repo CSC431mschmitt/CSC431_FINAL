@@ -40,18 +40,25 @@ namespace MatrixLib
         }
 
         public int rows
+        /* Get/set number of rows in Matrix */
         {
             get { return _rows; }
             set { _rows = value; }
         }
 
         public int cols
+        /* Get/set number of columns in Matrix */
         {
             get { return _cols; }
             set { _cols = value; }
         }
 
         public double[] data()
+        /* Return Matrix elements in array in row order, so
+         * for example given a 2x3 matrix, resulting array 
+         * would contain elements in this order:
+         * [ A[0,0], A[0,1], A[0,2], A[1,0], A[1,1], A[1,2] ]
+         */ 
         {
             List<double> result = new List<double>();
 
@@ -67,12 +74,17 @@ namespace MatrixLib
         }
 
         public double this[int row, int column]
+        /* Return Matrix element A[row, column] */
         {
             get { return _data[row][column]; }
             set { _data[row][column] = value; }
         }
 
         public Matrix Transpose()
+        /* 
+         * Purpose:     Interchange rows and columns of Matrix. 
+         * Returns:     Transposed Matrix, A.t, where A.t[i,j] = A[j,i].
+         */
         {
             Matrix T = new Matrix(_cols, _rows);
                             
@@ -88,6 +100,10 @@ namespace MatrixLib
         }
 
         public Matrix Clone()
+        /* 
+         * Purpose:     Make a deep copy of Matrix. 
+         * Returns:     Copy of Matrix, and not just reference to Matrix.
+         */
         {
             Matrix T = new Matrix(_rows, _cols);
 
@@ -456,11 +472,16 @@ namespace MatrixLib
         }
 
         public void swap_rows(int i, int j)
+        /* 
+         * Purpose:     Interchange items in row i with items in column j.
+         *              Will throw exception if Mx1 or 1xN matrix, and if
+         *              the row or column to interchange does not exist.
+         * Parameters:  i = row number to swap
+         *              j = column number to swap
+         */
         {
             try
             {
-                //var ex = new InvalidOperationException("Incompatible Dimensions");
-
                 if ( (this._rows == 1) || (this._cols == 1) )
 
                 {
@@ -611,23 +632,5 @@ namespace MatrixLib
 
             return M;
         }
-
-        public double norm()
-        {
-            double max_value = 0, col_sum;
-            
-            for (int i = 0; i < this.cols; i++)
-            {
-                col_sum = 0;
-                for (int j = 0; j < this.rows; j++)
-                    col_sum += this[j, i];
-
-                if (col_sum > max_value)
-                    max_value = col_sum;
-            }
-
-            return max_value;
-        }
-
     }
 }
