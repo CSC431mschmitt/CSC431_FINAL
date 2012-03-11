@@ -260,9 +260,8 @@ namespace MatrixTester
             ////Test is_almost_symmetric, expect fail
             //Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
             //Console.WriteLine("A is_almost_symmetric (expect fail): " + n.is_almost_symmetric(A));
-            
-            //Test norm(List<double>x, p=1)
-            //Numeric n = new Numeric();
+
+            ////Test norm(List<double>x, p=1)
             //List<double[]> list1 = new List<double[]>() { new double[] { 2 }, new double[] { 3 }, new double[] { 4 } };
             //List<double[]> list0 = new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 }, new double[] { 7, 8, 9 } };
             //List<double> list2 = new List<double>( new double[] { 2, 3, 4 } );
@@ -272,8 +271,8 @@ namespace MatrixTester
             //{
             //    Console.WriteLine(Matrix.from_list(list1));
             //    Console.WriteLine(Matrix.from_list(list3));
-            //    Console.WriteLine("1-norm of list2: " + n.norm(list2, 1));
-            //    Console.WriteLine("2-norm of Matrix " + Matrix.from_list(list0) + ": " + n.norm(Matrix.from_list(list0), 2));
+            //    Console.WriteLine("1-norm of list2: " + Numeric.norm(list2, 1));
+            //    Console.WriteLine("2-norm of Matrix " + Matrix.from_list(list0) + ": " + Numeric.norm(Matrix.from_list(list0), 2));
             //}
             //catch (Exception e)
             //{
