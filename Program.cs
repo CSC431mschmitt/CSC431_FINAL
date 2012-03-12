@@ -50,7 +50,13 @@ namespace MatrixTester
             //Program.test_function_class();
             //Program.test_solve_newton();
             //Program.test_optimize_newton();
-            Program.test_solve_newton_stabilized();
+            //Program.test_solve_newton_stabilized();
+            //Program.test_solve_bisection();
+            //Program.test_is_almost_symmetric();
+            //Program.test_norm();
+
+            //Program.test_exp();
+
             Console.ReadLine();
         }
 
@@ -331,38 +337,60 @@ namespace MatrixTester
             Console.WriteLine("\t   Result:\t solve_newton_stabilized(-10, 9) = " + mFunction2.solve_newton_stabilized(-10, 9));
         }
 
-            //Test Function Solve Bisection
-            //Console.WriteLine(mFunction.solve_bisection(-0.5, 9)); //Should roughly equal 2.0000267028808594.
-            //Console.WriteLine(mFunction2.solve_bisection(-10, 9)); //Should roughly equal 0.9999942779541016.
-            
+        public static void test_solve_bisection()
+        {
+            Console.WriteLine("\nTesting solve_bisection() ...\n");
+            MyFunction mFunction = new MyFunction();
+            MyFunction2 mFunction2 = new MyFunction2();
 
-            //Test is_almost_symmetric, expect success
-            //Numeric n = new Numeric();
-            //Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 1, 7, 3 }, new double[] { 7, 4, -5 }, new double[] { 3, -5, 6 } });
-            //Console.WriteLine("A is_almost_symmetric (expect success): " + n.is_almost_symmetric(B));
+            Console.WriteLine("\n\tf(x) = (x - 2) * (x + 8)");
+
+            Console.WriteLine("\n\tExpecting:\t solve_bisection(-0.5, 9) = 2.0000267028808594");
+            Console.WriteLine("\t   Result:\t solve_bisection(-0.5, 9) = " + mFunction.solve_bisection(-0.5, 9));
+
+            Console.WriteLine("\n\tf(x) = (x - 2) * (x - 2) * (x - 2) + x");
+
+            Console.WriteLine("\n\tExpecting:\t solve_bisection(-10, 9) = 0.9999942779541016");
+            Console.WriteLine("\t   Result:\t solve_bisection(-10, 9) = " + mFunction2.solve_bisection(-10, 9));
+        }
+
+        public static void test_is_almost_symmetric()
+        {
+            Console.WriteLine("\nTesting is_almost_symmetric() ...\n");
+            Numeric n = new Numeric();
             
-            ////Test is_almost_symmetric, expect fail
-            //Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
-            //Console.WriteLine("A is_almost_symmetric (expect fail): " + n.is_almost_symmetric(A));
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 7, 3 }, new double[] { 7, 4, -5 }, new double[] { 3, -5, 6 } });
+            Console.WriteLine("\n\tA: " + A.ToString());
+            Console.WriteLine("\n\t\tA is_almost_symmetric (expect success): " + n.is_almost_symmetric(A));
+
+            Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
+            Console.WriteLine("\n\tB: " + B.ToString());
+            Console.WriteLine("\n\t\tB is_almost_symmetric (expect fail): " + n.is_almost_symmetric(B));
+        }
+
+        public static void test_norm()
+        {
+            Console.WriteLine("\nTesting norm(List<double>x, p=1) ...\n");
             
-            //Test norm(List<double>x, p=1)
-            //Numeric n = new Numeric();
-            //List<double[]> list1 = new List<double[]>() { new double[] { 2 }, new double[] { 3 }, new double[] { 4 } };
-            //List<double[]> list0 = new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 }, new double[] { 7, 8, 9 } };
-            //List<double> list2 = new List<double>( new double[] { 2, 3, 4 } );
-            //List<double[]> list3 = new List<double[]>() { new double[] { 2, 3, 4 } };
-            //Matrix A = Matrix.from_list(list3);
-            //try
-            //{
-            //    Console.WriteLine(Matrix.from_list(list1));
-            //    Console.WriteLine(Matrix.from_list(list3));
-            //    Console.WriteLine("1-norm of list2: " + n.norm(list2, 1));
-            //    Console.WriteLine("2-norm of Matrix " + Matrix.from_list(list0) + ": " + n.norm(Matrix.from_list(list0), 2));
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine("{0} Exception caught.", e.ToString());
-            //}
+            List<double[]> list1 = new List<double[]>() { new double[] { 2 }, new double[] { 3 }, new double[] { 4 } };
+            List<double[]> list0 = new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 }, new double[] { 7, 8, 9 } };
+            List<double> list2 = new List<double>( new double[] { 2, 3, 4 } );
+            List<double[]> list3 = new List<double[]>() { new double[] { 2, 3, 4 } };
+            Matrix A = Matrix.from_list(list3);
+            try
+            {
+                //Console.WriteLine(Matrix.from_list(list1));
+                //Console.WriteLine(Matrix.from_list(list3));
+                Console.WriteLine("\n\tlist = [2, 3, 4]");
+                Console.WriteLine("\n\tExpecting t1-norm of list = 9");
+                Console.WriteLine("\t   Result t1-norm of list = " + Numeric.norm(list2, 1));
+                //EXCEPTION: Console.WriteLine("2-norm of Matrix " + Matrix.from_list(list0) + ": " + Numeric.norm(Matrix.from_list(list0), 2));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("{0} Exception caught.", e.ToString());
+            }
+        }                      
                                     
             ////Test condition_number(Matrix A)
             //Numeric n = new Numeric();
@@ -386,11 +414,16 @@ namespace MatrixTester
             //    Console.WriteLine("{0} Exception caught.", e.ToString());
             //}
 
+        public static void test_exp()
+        {
+            Console.WriteLine("\nTesting exp(Matrix A) ...\n");
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } });
 
-            ////Test exp(Matrix A)
-            //Numeric n = new Numeric();
-            //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } };
-            //Console.WriteLine("exp(" + Matrix.from_list(list1) + "): " + exp(Matrix.from_list(list1)));
+            Console.WriteLine("\n\tExpecting:\t exp(" + A.ToString() + ") = [[51.9682385150117, 74.7355185953338], [112.1032778930007, 164.07151640801243]]");
+            Console.WriteLine("\t   Result:\t exp(" + A.ToString() + ") = " + Numeric.exp(A).ToString());
+        }
+
+
 
             //Test is_positive_definite(Matrix A)
             //Numeric n = new Numeric();
