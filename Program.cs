@@ -34,14 +34,23 @@ namespace MatrixTester
             data = new List<double[]>() { new double[] { 1, 4, 7 }, new double[] { 3, 11, 19 } };
             m_from_list = Matrix.from_list(data);
             //Program.test_from_list();
-            //Program.test_as_list();     ??????
+            //Program.test_as_list(); 
             //Program.test_identity();
             //Program.test_diagonal();
             //Program.test_row();
             //Program.test_col();
-            //Program.test_matrix_add();       ?????
-            //Program.test_matrix_sub();       ?????
-            //Program.test_matrix_mult();      ?????
+            //Program.test_matrix_add();    
+            //Program.test_matrix_sub();    
+            //Program.test_matrix_mult();  //    ?????
+            //Program.test_matrix_div();  //    ?????
+            //Program.test_swap_rows();
+            //Program.test_data();
+            //Program.test_transpose();
+            //Program.test_clone();
+            //Program.test_function_class();
+            //Program.test_solve_newton();
+            //Program.test_optimize_newton();
+            Program.test_solve_newton_stabilized();
             Console.ReadLine();
         }
 
@@ -125,26 +134,25 @@ namespace MatrixTester
         public static void test_matrix_add()
         {
             Console.WriteLine("\nTesting __add__(A, B) ...\n");
-            Matrix A = m_from_list;
-            List<double[]>  Blist = new List<double[]>() { new double[] { 4, 3 }, new double[] { 2, 1 } };
-            Matrix B = Matrix.from_list(Blist);
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 4, 3 }, new double[] { 2, 1 }});
+            Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 2, 8 }, new double[] { 4, 1 }});
             Console.WriteLine("\tA: " + A.ToString());
             Console.WriteLine("\tB: " + B.ToString());
-            Console.WriteLine("\n\tExpecting A + B:\t[[???]]");
+            Console.WriteLine("\n\tExpecting A + B:\t[[6, 11], [6, 2]]");
             Console.WriteLine("\t   Result A + B:\t" + (A + B));
         }
 
         public static void test_matrix_sub()
         {
             Console.WriteLine("\nTesting __sub__(A, B) ...\n");
-            Matrix A = m_from_list;
-            List<double[]> Blist = new List<double[]>() { new double[] { 1 }, new double[] { 2 } };
-            Matrix B = Matrix.from_list(Blist);
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 4, 3 }, new double[] { 2, 1 }});
+            Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 2, 8 }, new double[] { 4, 1 }});
             Console.WriteLine("\tA: " + A.ToString());
             Console.WriteLine("\tB: " + B.ToString());
-            Console.WriteLine("\n\tExpecting B - A:\t[[???]]");
+            Console.WriteLine("\n\tExpecting B - A:\t[[-2, 5], [2, 0]]");
             Console.WriteLine("\t   Result B - A:\t" + (B - A));
 
+            A = Matrix.from_list(new List<double[]>() { new double[] { 1, 4, 7 }, new double[] { 3, 11, 19 } });
             Console.WriteLine("\nTesting __neg__(A) ...\n");
             Console.WriteLine("\tA: " + A.ToString());
             Console.WriteLine("\n\tExpecting -A:\t[[-1, -4, -7], [-3, -11, -19]]");
@@ -181,76 +189,147 @@ namespace MatrixTester
             Console.WriteLine("\n\tExpecting c4 * x:\t[[20], [25], [30]]");
             Console.WriteLine("\t   Result c4 * x:\t" + (c4 * x));
         }
+
+        public static void test_matrix_div()
+        {
+            Console.WriteLine("\nTesting __div__(A, B) ...\n");
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 4, 9 } });
+            Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 5, 2 }, new double[] { 1, 1 } });
+            Console.WriteLine("\tA: " + A.ToString());
+            Console.WriteLine("\tB: " + B.ToString());
+
+            Console.WriteLine("\n\tExpecting 1/A: [[9, -2], [-4, 1]]");
+            Console.WriteLine("\tResult of 1/A: " + (1 / A));
+
+            Console.WriteLine("\n\tExpecting A/A: [[1, 0], [0, 1]]");
+            Console.WriteLine("\tResult of A/A: " + (A / A));
+            Console.WriteLine("\n\tExpecting A/2: [[0.5, 1], [2, 4.5]]");
+            Console.WriteLine("\tResult of A/2: " + (A / 2));
+
+            A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2, 2 }, new double[] { 4, 4, 2 }, new double[] { 4, 6, 4 } });
+            B = Matrix.from_list(new List<double[]>() { new double[] { 3 }, new double[] { 6 }, new double[] { 10 } });
+
+            Console.WriteLine("\n\tExpecting (1/A)*B: [[-1], [3], [-1]]");
+            Console.WriteLine("\t   Result (1/A)*B: " + ((1/A) * B));
+
+            Console.WriteLine("\n\tExpecting B/A: ");
+            Console.WriteLine("\tResult B/A:\t" + (B/A));
+        }
+
+        public static void test_swap_rows()
+        {
+            Console.WriteLine("\nTesting swap_rows(A, i, j) ...\n");
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 3, 4, 5 }, new double[] { 8, 8, 8 } });
+            Console.WriteLine("A: " + A.ToString());
+            A.swap_rows(0, 1);
+            Console.WriteLine("\n\tExpecting:\t[[8, 8, 8], [3, 4, 5]]");
+            Console.WriteLine("\t   Result:\t" + A.ToString());
+        }
+
+        public static void test_data()
+        {
+            Console.WriteLine("\nTesting data ...\n");
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 2, 4, 2, 1 }, new double[] { 3, 1, 5, 2 }, new double[] { 1, 2, 3, 3 }, new double[] { 0, 6, 1, 2 } });
+            double[] list = A.data();
             
-            ////Test swap_rows(A, i, j)
-            //Console.WriteLine("B: " + B.ToString());
-            //B.swap_rows(0, 1);
-            //Console.WriteLine("B after swap rows: " + B.ToString());
+            Console.WriteLine("A: " + A.ToString());
 
-            ////test Matrix.data()
-            //Matrix N2 = Matrix.from_list(new List<double[]>() { new double[] { 2, 4, 2, 1 }, new double[] { 3, 1, 5, 2 }, new double[] { 1, 2, 3, 3 }, new double[] { 0, 6, 1, 2 } });
-            //double[] list = N2.data();
-            //string t = "[";
-            //for (int i = 0; i < list.Count(); i++)
-            //{
-            //    if (i > 0)
-            //        t += ", ";
+            Console.WriteLine("\n\tExpecting:\t[2, 4, 2, 1, 3, 1, 5, 2, 1, 2, 3, 3, 0, 6, 1, 2");
 
-            //    t += list[i];
-            //}
-            //t += "]";
-            //Console.WriteLine(t);
+            string t = "\t   Result:\t[";
+            for (int i = 0; i < list.Count(); i++)
+            {
+                if (i > 0)
+                    t += ", ";
+                t += list[i];
+            }
+            t += "]";
 
-            ////Test Transpose property
-            //Matrix A1 = Matrix.from_list(new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 } });
-            //Console.WriteLine(A1.ToString());
-            //Console.WriteLine(A1.Transpose());
+            Console.WriteLine(t);
+        }
 
-            ////Test Clone Matrix
-            //Matrix b1 = Matrix.from_list( new List<double[]>() { new double[] { 4, 3 }, new double[] { 2, 1 } } );
-            //Matrix b1_copy = b1.Clone();
-            //Console.WriteLine("b1: " + b1.ToString());
-            //Console.WriteLine("b1_copy: " + b1_copy.ToString());
-            //b1[0, 0] = 5.0;
-            //Console.WriteLine("b1: " + b1.ToString());
-            //Console.WriteLine("b1_copy: " + b1_copy.ToString());
-            
-            //Test Matrix Division
-            //Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 4, 9 } });
-            //Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 5, 2 }, new double[] { 1, 1 } });
+        public static void test_transpose()
+        {
+            Console.WriteLine("\nTesting Transpose() ...\n");
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 } });
+            Console.WriteLine("A: " + A.ToString());
+            A.swap_rows(0, 1);
+            Console.WriteLine("\n\tExpecting:\t[[4, 1], [5, 2], [6, 3]]");
+            Console.WriteLine("\t   Result:\t" + A.Transpose());
+        }
 
-            //Console.WriteLine("1 / A: " + 1 / A);
-            //Console.WriteLine("A / A: " + A / A);
-            //Console.WriteLine("A / 2: " + A / 2);
+        public static void test_clone()
+        {
+            Console.WriteLine("\nTesting Clone() ...\n");
+            Matrix b1 = Matrix.from_list(new List<double[]>() { new double[] { 4, 3 }, new double[] { 2, 1 } });
+            Matrix b1_copy = b1.Clone();
+            Console.WriteLine("\n\t    tb1: " + b1.ToString());
+            Console.WriteLine("\tb1_copy: " + b1_copy.ToString());
+            b1[0, 0] = 5.0;
+            Console.WriteLine("\n\tFollowing update of b1[0, 0] = 5.0, copy should remain unchanged:");
+            Console.WriteLine("\n\t     b1: " + b1.ToString());
+            Console.WriteLine("\tb1_copy: " + b1_copy.ToString()); 
+        }
 
-            //A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2, 2 }, new double[] { 4, 4, 2 }, new double[] { 4, 6, 4 } });
-            //B = Matrix.from_list(new List<double[]>() { new double[] { 3 }, new double[] { 6 }, new double[] { 10 } });
-            //Matrix x = (1 / A) * B;
-            //Console.WriteLine("x: " + x);
-            
-            //Test Function Class
-            //MyFunction mFunction = new MyFunction();
-            //MyFunction2 mFunction2 = new MyFunction2();
+        public static void test_function_class()
+        {
+            Console.WriteLine("\nTesting Function Class ...\n");
+            MyFunction mFunction = new MyFunction();
 
-            //Test Function Return
-            //Console.WriteLine(mFunction.f(2)); // f(2) = 0
-            //Console.WriteLine(mFunction.f(5)); // f(5) = 39
+            Console.WriteLine("\n\tf(x) = (x - 2) * (x + 8)");
 
-            //Test Function First Derivative
-            //Console.WriteLine(mFunction.Df(2)); // Df(2) = 10
-            //Console.WriteLine(mFunction.Df(5)); // Df(5) = 16
+            Console.WriteLine("\n\tExpecting:\t f(2) = 0");
+            Console.WriteLine("\t   Result:\t f(2) = " + mFunction.f(2));
+            Console.WriteLine("\n\tExpecting:\t f(5) = 39");
+            Console.WriteLine("\t   Result:\t f(5) = " + mFunction.f(5));
+            Console.WriteLine("\n\tExpecting:\t Df(2) ~ 10");
+            Console.WriteLine("\t   Result:\t Df(2) = " + mFunction.Df(2));
+            Console.WriteLine("\n\tExpecting:\t Df(5) ~ 16");
+            Console.WriteLine("\t   Result:\t Df(5) = " + mFunction.Df(5));
+            Console.WriteLine("\n\tExpecting:\t DDf(2) ~ 2");
+            Console.WriteLine("\t   Result:\t Df(2) = " + mFunction.DDf(2));
+            Console.WriteLine("\n\tExpecting:\t DDf(5) ~ 2");
+            Console.WriteLine("\t   Result:\t Df(5) = " + mFunction.DDf(5));
+        }
 
-            //Test Function Second Derivative
-            //Console.WriteLine(mFunction.DDf(2)); // DDf(2) ~ 2
-            //Console.WriteLine(mFunction.DDf(5)); // DDf(5) ~ 2
+        public static void test_solve_newton()
+        {
+            Console.WriteLine("\nTesting solve_newton() ...\n");
+            MyFunction mFunction = new MyFunction();
 
-            //Test Function Solve Newton
-            //Console.WriteLine(mFunction.solve_newton(0.5)); //Should roughly equal 2.
-            //Console.WriteLine(mFunction.optimize_newton(0.5)); //Should roughly equal -3.
+            Console.WriteLine("\n\tf(x) = (x - 2) * (x + 8)");
 
-            //Test Function Solve Newton Stabilized
-            //Console.WriteLine(mFunction.solve_newton_stabilized(-0.5, 9)); //Should roughly equal 2.000000002707719.
-            //Console.WriteLine(mFunction2.solve_newton_stabilized(-10, 9)); //Should roughly equal 0.9999999946201354.
+            Console.WriteLine("\n\tExpecting:\t solve_newton(0.5) ~ 2");
+            Console.WriteLine("\t   Result:\t solve_newton(0.5) = " + mFunction.solve_newton(0.5));
+        }
+
+        public static void test_optimize_newton()
+        {
+            Console.WriteLine("\nTesting optimize_newton() ...\n");
+            MyFunction mFunction = new MyFunction();
+
+            Console.WriteLine("\n\tf(x) = (x - 2) * (x + 8)");
+
+            Console.WriteLine("\n\tExpecting:\t optimize_newton(0.5) ~ -3");
+            Console.WriteLine("\t   Result:\t optimize_newton(0.5) = " + mFunction.optimize_newton(0.5));
+        }
+
+        public static void test_solve_newton_stabilized()
+        {
+            Console.WriteLine("\nTesting solve_newton_stabilized() ...\n");
+            MyFunction mFunction = new MyFunction(); 
+            MyFunction2 mFunction2 = new MyFunction2();
+
+            Console.WriteLine("\n\tf(x) = (x - 2) * (x + 8)");
+
+            Console.WriteLine("\n\tExpecting:\t solve_newton_stabilized(-0.5, 9) = 2.000000002707719");
+            Console.WriteLine("\t   Result:\t solve_newton_stabilized(-0.5, 9) = " + mFunction.solve_newton_stabilized(-0.5, 9));
+
+            Console.WriteLine("\n\tf(x) = (x - 2) * (x - 2) * (x - 2) + x");
+
+            Console.WriteLine("\n\tExpecting:\t solve_newton_stabilized(-10, 9) = 0.9999999946201354");
+            Console.WriteLine("\t   Result:\t solve_newton_stabilized(-10, 9) = " + mFunction2.solve_newton_stabilized(-10, 9));
+        }
 
             //Test Function Solve Bisection
             //Console.WriteLine(mFunction.solve_bisection(-0.5, 9)); //Should roughly equal 2.0000267028808594.
