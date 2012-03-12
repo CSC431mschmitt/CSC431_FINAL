@@ -1007,7 +1007,7 @@ namespace MatrixLib
         }
 
 
-        public Matrix exp(Matrix A, double ap=0.000001, double rp=0.0001, int ns=40)
+        public static Matrix exp(Matrix A, double ap=0.000001, double rp=0.0001, int ns=40)
         /* 
          * Purpose:     Compute exponential of Matrix A using series expansion
          * Parameters:  A - Matrix to test for symmetry.
