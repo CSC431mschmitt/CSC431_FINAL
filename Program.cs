@@ -54,7 +54,7 @@ namespace MatrixTester
             //Program.test_solve_bisection();
             //Program.test_is_almost_symmetric();
             //Program.test_norm();
-
+            //Program.test_condition_number();
             //Program.test_exp();
 
             Console.ReadLine();
@@ -390,29 +390,36 @@ namespace MatrixTester
             {
                 Console.WriteLine("{0} Exception caught.", e.ToString());
             }
-        }                      
-                                    
-            ////Test condition_number(Matrix A)
-            //Numeric n = new Numeric();
-            //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } };
-            //try
-            //{
-            //    Console.WriteLine("condition number of Matrix " + Matrix.from_list(list1) + ": " + n.condition_number(Matrix.from_list(list1)));
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine("{0} Exception caught.", e.ToString());
-            //}
-            ////Test condition_number(f, x=None, h=0.000001)
-            //try
-            //{
-            //    MyFunction3 fn = new MyFunction3();
-            //    Console.WriteLine("condition number of function " + fn + ": " + n.condition_number(fn, 1));
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine("{0} Exception caught.", e.ToString());
-            //}
+        }
+
+        public static void test_condition_number()
+        {
+            Numeric n = new Numeric();
+            List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 3, 4 } };
+            
+            Console.WriteLine("\nTesting test_condition_number(Matrix A) ...\n");
+            try
+            {
+                Console.WriteLine("\tExpecting:\tCondition number of Matrix [[1, 2], [3, 4]] = 21");
+                Console.WriteLine("\t   Result:\tCondition number of Matrix " + Matrix.from_list(list1) + " = " + n.condition_number(Matrix.from_list(list1)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("{0} Exception caught.", e.ToString());
+            }
+
+            Console.WriteLine("\nTesting test_condition_number(f, x=None, h=0.000001) ...\n");
+            try
+            {
+                MyFunction3 fn = new MyFunction3();
+                Console.WriteLine("\tExpecting:\tCondition number of function f(x) = (x * x) - (5.0 * x) = 0.75");
+                Console.WriteLine("\t   Result:\tCondition number of function f(x) = (x * x) - (5.0 * x) = " + n.condition_number(fn, 1));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("{0} Exception caught.", e.ToString());
+            }
+        }
 
         public static void test_exp()
         {
@@ -424,14 +431,15 @@ namespace MatrixTester
         }
 
 
-
+        public static void test_is_positive_definite()
+        {
             //Test is_positive_definite(Matrix A)
             //Numeric n = new Numeric();
             //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 2, 1 } }; //false
             //List<double[]> list2 = new List<double[]>() { new double[] { 2, -1, 0 }, new double[] { -1, 2, -1 }, new double[] { 0, -1, 2 } }; //true
             //Console.WriteLine("is_positive_definite(" + Matrix.from_list(list1) + "), expect false: " + n.exp(Matrix.from_list(list1)));
             //Console.WriteLine("is_positive_definite(" + Matrix.from_list(list2) + "), expect true: " + n.exp(Matrix.from_list(list2)));
-
+        }
             ////Test Cholesky and is_almost_zero
             //Numeric n = new Numeric();
             //List<double[]> list3 = new List<double[]>() { new double[] { 4, 2, 1 }, new double[] { 2, 9, 3 }, new double[] { 1, 3, 16 } };
