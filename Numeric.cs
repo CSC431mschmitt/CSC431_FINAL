@@ -45,9 +45,6 @@ namespace MatrixLib
     public class MultivariateFunction
     /* Multivariate function object that allows us to work with functions of multiple 
      * variables and handles dealing with partial derivatives.
-     *###
-     *##### OPTIONAL
-     *###
      */
     {
         public MultivariateFunction() { }
@@ -291,9 +288,11 @@ namespace MatrixLib
         public Function[] func;
         public Matrix c;
 
+        /* Constructors for default function object. */
         public Function() { }
         public Function(Function[] func, Matrix c) { this.func = func; this.c = c;  }
 
+        /* Actual function computation is done through f() method.  This is expected to be overridden so the default goes to f(x)=0*x. */
         public virtual double f(double x) { return 0 * x; }
 
         public double eval_fitting_function(double x)
@@ -319,19 +318,31 @@ namespace MatrixLib
             }
         }
 
+        /* Functions:   Df, DDf
+         * Purpose:     Calculates the first and second derivative of the function f(x).
+         * Parameters:  x - value to evaluate the derivative about.
+         *              h - distance between points to derive about.
+         * Returns:     The value of the derivative given x.
+         */
         public double Df(double x, double h = 1e-5) { return (f(x + h) - f(x - h)) / (2.0 * h); }
-
         public double DDf(double x, double h = 1e-5) { return (f(x + h) - 2.0 * f(x) + f(x - h)) / (h * h); }
 
+        /* Simple function to calculate f(x)  plus a given value x. */
         public double g(double x) { return f(x) + x; }
 
+        /* Functions:   Dg, DDg
+          * Purpose:     Calculates the first and second derivative of the function g(x).
+          * Parameters:  x - value to evaluate the derivative about.
+          *              h - distance between points to derive about.
+          * Returns:     The value of the derivative given x.
+          */
         public double Dg(double x, double h = 1e-5) { return (g(x + h) - g(x - h)) / (2.0 * h); }
-
         public double DDg(double x, double h = 1e-5) { return (g(x + h) - 2.0 * g(x) + g(x - h)) / (h * h); }
 
         public double solve_newton(double x_guess, double ap = 1e-5, double rp = 1e-4, int ns = 100)
         /* Function:    solve_newton
-         * Purpose:     Finds the approximation of the root of a function to the precision specified using successive closer guesses.
+         * Purpose:     Finds the approximation of the root of a function to the precision specified using successive closer guesses
+         *              of a difference equal to the quotient of the function evaluated about x and the first derivative.
          * Parameters:  x_guess - initial guess of the root to use as evaluation starting point.
          *              ap - absolute precision of solution 
          *              rp - relative precision of solution
@@ -361,6 +372,15 @@ namespace MatrixLib
         }  
 
         public double optimize_newton(double x_guess, double ap = 1e-5, double rp = 1e-4, int ns = 20)
+        /* Function:    optimize_newton
+         * Purpose:     Finds the approximation of the root of a function to the precision specified using successive closer guesses 
+         *              of a difference equal to the quotient of the first and second derivatives.
+         * Parameters:  x_guess - initial guess of the root to use as evaluation starting point.
+         *              ap - absolute precision of solution 
+         *              rp - relative precision of solution
+         *              ns - max number of steps to iterate before concluding the function does not converge
+         * Returns:     The best approximation of the root of the function.
+         */
         {
             double x_old, x = x_guess;
 
@@ -383,10 +403,14 @@ namespace MatrixLib
         }
 
         public double solve_fixed_point(double x, double ap = 0.000001, double rp = 0.0001, int ns = 100)
-        /* Function: solve_fixed_point
-         * Purpose: 
-         * Parameters: 
-         * Returns: 
+        /* Function:    solve_fixed_point
+         * Purpose:     Finds the approximation of the root of a function to the precision specified using successive closer guesses 
+         *              by evaluating a function f(x) offset by a given amount x.
+         * Parameters:  x - initial guess of the root to use as evaluation starting point.
+         *              ap - absolute precision of solution 
+         *              rp - relative precision of solution
+         *              ns - max number of steps to iterate before concluding the function does not converge
+         * Returns:     The best approximation of the root of the function.
          */
         {
             double old_x;
@@ -416,10 +440,10 @@ namespace MatrixLib
 
         public double solve_bisection(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 100)
         /* Function:    solve_bisection
-         * Purpose:     Solve f(x) = 0 when function is continuous and is known to change
-         *              sign between x=a and x=b.
-         * Parameters: ???Are a and b matrix or double parameters???
-         * Returns:     Approximation for exact solution
+         * Purpose:     Solve f(x) = 0 when function is continuous and is known to change sign between x=a and x=b.
+         * Parameters:  a - left bound of function root approximation 
+         *              b - right bound of function root approximation 
+         * Returns:     Approximation for exact solution.
          */
         {
             double fa = f(a), fb = f(b), x, fx;
@@ -472,7 +496,7 @@ namespace MatrixLib
          *              ap - absolute precision
          *              rp - relative precision
          *              ns - max number of iterations
-         * Returns:     Approximation for exact solution
+         * Returns:     Approximation for exact solution.
          */
         {
             double fx = f(x);
@@ -517,9 +541,14 @@ namespace MatrixLib
 
         public double solve_newton_stabilized(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 20)
         /* Function:    solve_newton_stabilized
-         * Purpose: 
-         * Parameters: 
-         * Returns:     Approximation for exact solution
+         * Purpose:     Solve f(x) = 0 when function is continuous and is known to change sign between x=a and x=b.  Optimizes by choosing best approximation
+         *              between bisection and derivative ratio to decrease number of steps to solution.
+         * Parameters:  a - left bound of function root approximation 
+         *              b - right bound of function root approximation 
+         *              ap - absolute precision
+         *              rp - relative precision
+         *              ns - max number of iterations
+         * Returns:     Approximation for exact solution.
          */
         {
             double fa = f(a), fb = f(b), x, fx, Dfx, x_old, fx_old;
@@ -682,9 +711,15 @@ namespace MatrixLib
 
         public double optimize_newton_stabilized(double a, double b, double ap = 0.000001, double rp = 0.0001, int ns = 20)
         /* Function:    optimize_newton_stabilized
-         * Purpose: 
-         * Parameters: 
-         * Returns:     Approximation for exact solution
+         * Purpose:     Solve f(x) = 0 when function is continuous and is known to change sign between x=a and x=b.  
+         *              Optimizes by choosing best approximation between bisection and first and second derivative ratios to decrease 
+         *              number of steps to solution.
+         * Parameters:  a - left bound of function root approximation 
+         *              b - right bound of function root approximation 
+         *              ap - absolute precision
+         *              rp - relative precision
+         *              ns - max number of iterations
+         * Returns:     Approximation for exact solution.
          */
         {
             double Dfa = Df(a), Dfb = Df(b), x, fx, Dfx, DDfx, x_old, fx_old, Dfx_old;
