@@ -34,7 +34,7 @@ namespace MatrixTester
             data = new List<double[]>() { new double[] { 1, 4, 7 }, new double[] { 3, 11, 19 } };
             m_from_list = Matrix.from_list(data);
             //Program.test_from_list();
-            //Program.test_as_list(); 
+            //Program.test_as_list();
             //Program.test_identity();
             //Program.test_diagonal();
             //Program.test_row();
@@ -56,7 +56,17 @@ namespace MatrixTester
             //Program.test_norm();
             //Program.test_condition_number();
             //Program.test_exp();
-
+            //Program.test_is_positive_definite();
+            //Program.test_cholesky();
+            //Program.test_is_almost_zero();
+            //Program.test_solve_secant();
+            //Program.test_optimize_secant();
+            //Program.test_optimize_bisection();
+            //Program.test_optimize_golden_search();
+            //Program.test_markowitz();                 //    ?????
+            //Program.test_sqrt();
+            //Program.test_solve_fixed_point();
+            Program.test_partial();
             Console.ReadLine();
         }
 
@@ -72,29 +82,43 @@ namespace MatrixTester
         public static void test_as_list()
         {
             Console.WriteLine("\nTesting as_list(A) ...\n");
-            Console.WriteLine("\tExpecting:\t[[1, 4, 7], [3, 11, 19]]");
+            Console.Write("\tExpecting:\t");
 
-             ////Test def as_list(A)
-            //List<double[]> m_as_list = m_from_list.as_list();
-            //List<double[]> m_as_list2 = (m_from_list.Transpose()).data;
-            //Console.Write("[");
-            //for (int j = 0; j < m_as_list2.Count; j++)
-            //{
-            //    if (j > 0)
-            //        Console.Write(", ");
+            List<double[]> m_as_list = m_from_list.as_list();
+            Console.Write("[");
+            for (int j = 0; j < m_as_list.Count; j++)
+            {
+                if (j > 0)
+                    Console.Write(", ");
 
-            //    Console.Write("[");
-            //    double[] values = m_as_list2[j];
-            //    for (int k = 0; k < values.Length; k++)
-            //    {
-            //        if (k > 0)
-            //            Console.Write(", ");
-            //        Console.Write(values[k]);
-            //    }
-            //    Console.Write("]");
-            //}
-            //Console.WriteLine("]");
-            Console.WriteLine("\t   Result:\t" + m_from_list);
+                Console.Write("[");
+                double[] values = m_as_list[j];
+                for (int k = 0; k < values.Length; k++)
+                {
+                    if (k > 0)
+                        Console.Write(", ");
+                    Console.Write(values[k]);
+                }
+                Console.Write("]");
+            }
+            Console.WriteLine("]");
+
+            Console.Write("\n\t   Result:\t");
+            int i = 0, g = 0;
+            Console.Write("[");
+            foreach (double[] s in m_as_list)
+            {
+                if (i++ > 0) Console.Write(", ");
+                Console.Write("[");
+                g = 0;
+                foreach (double r in s)
+                {
+                    if (g++ > 0) Console.Write(", ");
+                    Console.Write(r);
+                }
+                Console.Write("]");
+            }
+            Console.Write("]");
         }
 
         public static void test_identity()
@@ -433,35 +457,84 @@ namespace MatrixTester
 
         public static void test_is_positive_definite()
         {
-            //Test is_positive_definite(Matrix A)
-            //Numeric n = new Numeric();
-            //List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 2, 1 } }; //false
-            //List<double[]> list2 = new List<double[]>() { new double[] { 2, -1, 0 }, new double[] { -1, 2, -1 }, new double[] { 0, -1, 2 } }; //true
-            //Console.WriteLine("is_positive_definite(" + Matrix.from_list(list1) + "), expect false: " + n.exp(Matrix.from_list(list1)));
-            //Console.WriteLine("is_positive_definite(" + Matrix.from_list(list2) + "), expect true: " + n.exp(Matrix.from_list(list2)));
+            Console.WriteLine("\nTesting is_positive_definite(Matrix A) ...\n");
+            Numeric n = new Numeric();
+            List<double[]> list1 = new List<double[]>() { new double[] { 1, 2 }, new double[] { 2, 1 } }; //false
+            List<double[]> list2 = new List<double[]>() { new double[] { 2, -1, 0 }, new double[] { -1, 2, -1 }, new double[] { 0, -1, 2 } }; //true
+
+            Console.Write("\n\tExpect Fail: is_positive_definite(" + Matrix.from_list(list1) + ") = ");
+            Console.WriteLine(n.is_positive_definite(Matrix.from_list(list1)));
+            Console.WriteLine("\tExpect True: is_positive_definite(" + Matrix.from_list(list2) + ") = " + n.is_positive_definite(Matrix.from_list(list2)));
         }
-            ////Test Cholesky and is_almost_zero
-            //Numeric n = new Numeric();
-            //List<double[]> list3 = new List<double[]>() { new double[] { 4, 2, 1 }, new double[] { 2, 9, 3 }, new double[] { 1, 3, 16 } };
-            //Matrix A = Matrix.from_list(list3);
-            //Matrix L = n.Cholesky(A);
-            //Console.WriteLine("Cholesky Matrix: " + L);
-            //Console.WriteLine("is_almost_zero(A - L*L.t), expect true: " + n.is_almost_zero(A - L * L.Transpose()));
 
-            //Test solvers/optimizers
-            //MyFunction4 func = new MyFunction4();
-            ////solve_secant
-            //Console.WriteLine("solve_secant(f,1.0), f(x)=(x-2)*(x-5): " + func.solve_secant(1.0)); //2.0
+        public static void test_cholesky()
+        {
+            Console.WriteLine("\nTesting Cholesky(Matrix A) ...\n");
+            Numeric n = new Numeric();
+            List<double[]> list3 = new List<double[]>() { new double[] { 4, 2, 1 }, new double[] { 2, 9, 3 }, new double[] { 1, 3, 16 } };
+            Matrix A = Matrix.from_list(list3);
+            Matrix L = n.Cholesky(A);
+            Console.WriteLine("\n\tA: " + A.ToString());
+            Console.WriteLine("\n\tCholesky:\t" + L);
+        }
 
-            ////optimize_secant
-            //Console.WriteLine("optimize_secant(f,3.0), f(x)=(x-2)*(x-5): " + func.optimize_secant(1.0)); //3.5
+        public static void test_is_almost_zero()
+        {
+            Console.WriteLine("\nTesting is_almost_zero(Matrix A) ...\n");
+            Numeric n = new Numeric();
+            List<double[]> list3 = new List<double[]>() { new double[] { 4, 2, 1 }, new double[] { 2, 9, 3 }, new double[] { 1, 3, 16 } };
+            Matrix A = Matrix.from_list(list3);
+            Matrix L = n.Cholesky(A);
+            Console.WriteLine("\n\tA: " + A.ToString());
+            Console.WriteLine("\n\tExpect True: is_almost_zero(A - L*L.t) = " + n.is_almost_zero(A - L * L.Transpose()));
+        }
 
-            ////optimize_bisection
-            //Console.WriteLine("optimize_bisection(f,2.0,5.0), f(x)=(x-2)*(x-5): " + func.optimize_bisection(2.0, 5.0)); //3.5
+        public static void test_solve_secant()
+        {
+            Console.WriteLine("\nTesting solve_secant(x) ...\n");
+            MyFunction4 func = new MyFunction4();
 
-            //optimize_golden_search
-            //Console.WriteLine("optimize_golden_search(f,2.0,5.0), f(x)=(x-2)*(x-5): " + func.optimize_golden_search(2.0, 5.0)); //3.5
-            
+            Console.WriteLine("\n\tf(x) = (x-2) * (x-5)");
+
+            Console.WriteLine("\n\tExpecting:\t solve_secant(1.0) = 1.9999999552965158");
+            Console.WriteLine("\t   Result:\t solve_secant(1.0) = " + func.solve_secant(1.0));
+        }
+
+        public static void test_optimize_secant()
+        {
+            Console.WriteLine("\nTesting optimize_secant(x) ...\n");
+            MyFunction4 func = new MyFunction4();
+
+            Console.WriteLine("\n\tf(x) = (x-2) * (x-5)");
+
+            Console.WriteLine("\n\tExpecting:\t optimize_secant(1.0) = 3.4999999999402016");
+            Console.WriteLine("\t   Result:\t optimize_secant(1.0) = " + func.optimize_secant(1.0));
+        }
+
+        public static void test_optimize_bisection()
+        {
+            Console.WriteLine("\nTesting optimize_bisection(a, b) ...\n");
+            MyFunction4 func = new MyFunction4();
+
+            Console.WriteLine("\n\tf(x) = (x-2) * (x-5)");
+
+            Console.WriteLine("\n\tExpecting:\t optimize_bisection(2.0, 5.0) = 3.5");
+            Console.WriteLine("\t   Result:\t optimize_bisection(2.0, 5.0) = " + func.optimize_bisection(2.0, 5.0));
+        }
+
+        public static void test_optimize_golden_search()
+        {
+            Console.WriteLine("\nTesting optimize_golden_search(a, b) ...\n");
+            MyFunction4 func = new MyFunction4();
+
+            Console.WriteLine("\n\tf(x) = (x-2) * (x-5)");
+
+            Console.WriteLine("\n\tExpecting:\t optimize_golden_search(2.0, 5.0) = 3.500061284523513");
+            Console.WriteLine("\t   Result:\t optimize_golden_search(2.0, 5.0) = " + func.optimize_golden_search(2.0, 5.0));
+        }
+
+        public static void test_markowitz()
+        {
             ////Test Markowitz function
             //List<double[]> listMark = new List<double[]>() { new double[] { 0.04, 0.006, 0.02 }, new double[] { 0.006, 0.09, 0.06 }, new double[] { 0.02, 0.06, 0.16 } };
             //Matrix cov = Matrix.from_list(listMark);
@@ -470,43 +543,54 @@ namespace MatrixTester
             //double r_free = 0.05, portfolio_return, portfolio_risk;
             //double[] portfolio;
             //Numeric.Markovitz(mu, cov, r_free, out portfolio, out portfolio_return, out portfolio_risk);
-            
+
             //foreach (double s in portfolio)
             //    Console.WriteLine(s);
             //Console.WriteLine("\n" + portfolio_return + "\t" + portfolio_risk);
+        }
 
-            //// TEST ComplexNumber object and SQRT function.
-            //ComplexNumber c1 = new ComplexNumber(3, 0);
-            //ComplexNumber c2 = new ComplexNumber(0, 4);
-            //ComplexNumber c3 = new ComplexNumber(6, 7);
-            //ComplexNumber c4 = Numeric.sqrt(-9.0);
-            //Console.WriteLine(c1);
-            //Console.WriteLine(c2);
-            //Console.WriteLine(c3);
-            //Console.WriteLine(c4);
-            //Console.WriteLine(Numeric.sqrt(-45.0));
-            //Console.WriteLine(Numeric.sqrt(45.0));
-            //Console.WriteLine(Numeric.sqrt(45));
+        public static void test_sqrt()
+        {
+            Console.WriteLine("\nTesting sqrt(x) ...\n");
 
-            ////TEST Norm of Matrix.
-            //Matrix N = Matrix.from_list(new List<double[]>() { new double[] { 3, 5, 7 }, new double[] { 2, 6, 4 }, new double[] { 0, 2, 8 } });
-            //Matrix N2 = Matrix.from_list(new List<double[]>() { new double[] { 2, 4, 2, 1 }, new double[] { 3, 1, 5, 2 }, new double[] { 1, 2, 3, 3 }, new double[] { 0, 6, 1, 2 } });
-            //Console.WriteLine(Numeric.norm(N).ToString());
-            //Console.WriteLine(Numeric.norm(N2).ToString());
+            Console.WriteLine("\n\tExpecting:\t sqrt(-45) = 6.708203932499369j");
+            Console.WriteLine("\t   Result:\t sqrt(-45) = " + Numeric.sqrt(-45.0));
 
-            ///TEST solve_fixed_point
-            //MyFunction5 f5 = new MyFunction5();
-            //Console.WriteLine(Math.Round(f5.solve_fixed_point(1.0, 0.000001, 0), 4));  //Expecting 2.
+            Console.WriteLine("\n\tExpecting:\t sqrt(10.0) = 3.1622776601683795");
+            Console.WriteLine("\t   Result:\t sqrt(10.0) = " + Numeric.sqrt(10.0));
 
-            ////Test partial
-            //MyFunction6 f6 = new MyFunction6();
-            //double[] x = new double[] {1, 1, 1};
-            //double df0 = f6.partial(x, 0);
-            //double df1 = f6.partial(x, 1);
-            //double df2 = f6.partial(x, 2);
-            //Console.WriteLine("partial df0: " + Math.Round(df0, 4)); //2.0
-            //Console.WriteLine("partial df1: " + Math.Round(df1, 4)); //8.0
-            //Console.WriteLine("partial df2: " + Math.Round(df2, 4)); //5.0
+            Console.WriteLine("\n\tExpecting:\t sqrt(9) = 3.0");
+            Console.WriteLine("\t   Result:\t sqrt(9) = " + Numeric.sqrt(9));
+        }
+
+        public static void test_solve_fixed_point()
+        {
+            Console.WriteLine("\nTesting solve_fixed_point(x) ...\n");
+            MyFunction5 f5 = new MyFunction5();
+
+            Console.WriteLine("\n\tf(x) = (x - 2) * (x - 5) / 10");
+
+            Console.WriteLine("\n\tExpecting:\t solve_fixed_point(1.0) = 1.9996317277774924");
+            Console.WriteLine("\t   Result:\t solve_fixed_point(1.0) = " + f5.solve_fixed_point(1.0));
+        }
+
+        public static void test_partial()
+        {
+            Console.WriteLine("\nTesting partial(x, i) ...\n");
+            MyFunction6 f6 = new MyFunction6();
+            double[] x = new double[] {1, 1, 1};
+
+            Console.WriteLine("\n\tf(x[]) =  (2.0 * x[0]) + (3.0 * x[1]) + (5.0 * x[1] * x[2])");
+
+            Console.WriteLine("\n\tExpecting:\t partial(x, 0) = 2.0");
+            Console.WriteLine("\t   Result:\t partial(x, 0) = " + f6.partial(x, 0));
+
+            Console.WriteLine("\n\tExpecting:\t partial(x, 2) = 8.0");
+            Console.WriteLine("\t   Result:\t partial(x, 1) = " + f6.partial(x, 1));
+
+            Console.WriteLine("\n\tExpecting:\t partial(x, 2) = 5.0");
+            Console.WriteLine("\t   Result:\t partial(x, 2) = " + f6.partial(x, 2));
+        }
 
             ////test jacobian
             //MultivariateFunction multi = new MultivariateFunction();
