@@ -41,8 +41,8 @@ namespace MatrixTester
             //Program.test_col();
             //Program.test_matrix_add();    
             //Program.test_matrix_sub();    
-            //Program.test_matrix_mult();  //    ?????
-            //Program.test_matrix_div();  //    ?????
+            //Program.test_matrix_mult();
+            //Program.test_matrix_div();
             //Program.test_swap_rows();
             //Program.test_data();
             //Program.test_transpose();
@@ -63,10 +63,17 @@ namespace MatrixTester
             //Program.test_optimize_secant();
             //Program.test_optimize_bisection();
             //Program.test_optimize_golden_search();
-            //Program.test_markowitz();                 //    ?????
+            //Program.test_markowitz();
             //Program.test_sqrt();
             //Program.test_solve_fixed_point();
-            Program.test_partial();
+            //Program.test_partial();
+            //Program.test_jacobian();
+            //Program.test_gradient();
+            //Program.test_hessian();
+            //Program.test_solve_newton_multi();
+            //Program.test_optimize_newton_multi();
+            //Program.fit_least_squares();
+
             Console.ReadLine();
         }
 
@@ -86,37 +93,24 @@ namespace MatrixTester
 
             List<double[]> m_as_list = m_from_list.as_list();
             Console.Write("[");
-            for (int j = 0; j < m_as_list.Count; j++)
+            int j = 0;
+            foreach(double[] values in m_as_list)
             {
-                if (j > 0)
+                if (j++ > 0)
                     Console.Write(", ");
-
-                Console.Write("[");
-                double[] values = m_as_list[j];
-                for (int k = 0; k < values.Length; k++)
-                {
-                    if (k > 0)
-                        Console.Write(", ");
-                    Console.Write(values[k]);
-                }
-                Console.Write("]");
+                
+                Console.Write("[" + string.Join(", ", values) + "]" );
             }
             Console.WriteLine("]");
+            
 
             Console.Write("\n\t   Result:\t");
-            int i = 0, g = 0;
+            int i = 0;
             Console.Write("[");
             foreach (double[] s in m_as_list)
             {
-                if (i++ > 0) Console.Write(", ");
-                Console.Write("[");
-                g = 0;
-                foreach (double r in s)
-                {
-                    if (g++ > 0) Console.Write(", ");
-                    Console.Write(r);
-                }
-                Console.Write("]");
+                if (i++ > 0) Console.Write(", "); 
+                Console.Write("[" + string.Join(", ", s) + "]");
             }
             Console.Write("]");
         }
@@ -191,29 +185,31 @@ namespace MatrixTester
 
         public static void test_matrix_mult()
         {
-            Console.WriteLine("\nTesting __mult__(A, B) ...\n");
-            Matrix A = m_from_list;
-            List<double[]> Blist = new List<double[]>() { new double[] { 1 }, new double[] { 2 } };
-            Matrix B = Matrix.from_list(Blist);
+            Console.WriteLine("\nTesting __mult__(Matrix A, Matrix B) ...\n");
+
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 4, 7 }, new double[] { 3, 11, 19 } });
+            Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 1 }, new double[] { 2 }, new double[] { 3 } });
+                        
             Console.WriteLine("\tA: " + A.ToString());
             Console.WriteLine("\tB: " + B.ToString());
-            Console.WriteLine("\n\tExpecting A * B:\t[[???]]");
-            Console.WriteLine("\t   Result A * B:\t" + (A * B));
+            Console.WriteLine("\n\tExpecting A * B:\t[[30.0], [82.0]]");
+            Console.WriteLine("\t   Result A * B:\t\t" + (A * B));
 
-            Console.WriteLine("\nTesting __mult__(c1, c2) ...\n");
-            Matrix c1 = Matrix.from_list( new List<double[]>() { new double[] {3}, new double[] {2}, new double[] {1} } );
-            Matrix c2 = Matrix.from_list( new List<double[]>() { new double[] {4}, new double[] {5}, new double[] {6} });
+            Console.WriteLine("\nTesting __mult__(Matrix c1, Matrix c2) ...\n");
+            Matrix c1 = Matrix.from_list(new List<double[]>() { new double[] { 3 }, new double[] { 2 }, new double[] { 1 } });
+            Matrix c2 = Matrix.from_list(new List<double[]>() { new double[] { 4 }, new double[] { 5 }, new double[] { 6 } });
             Console.WriteLine("\tc1: " + c1.ToString());
             Console.WriteLine("\tc2: " + c2.ToString());
             Console.WriteLine("\n\tExpecting c1 * c2:\t[[28]]");
-            Console.WriteLine("\t   Result c1 * c2:\t" + (c1 * c2));
+            Console.WriteLine("\t   Result c1 * c2:\t\t" + (c1 * c2));
 
-            Console.WriteLine("\nTesting __mult__(c3, x) ...\n");
+            Console.WriteLine("\nTesting __mult__(Matrix c3, scalar x) ...\n");
             Matrix c3 = m_from_list;
             Matrix c4 = Matrix.from_list(new List<double[]>() { new double[] { 4 }, new double[] { 5 }, new double[] { 6 } });
             double x = 5.0;
             Console.WriteLine("\tc3: " + c3.ToString());
             Console.WriteLine("\tc4: " + c4.ToString());
+            Console.WriteLine("\tx: " + x.ToString());
             Console.WriteLine("\n\tExpecting c3 * x:\t[[5, 20, 35], [15, 55, 95]]");
             Console.WriteLine("\t   Result c3 * x:\t" + (c3 * x));
             Console.WriteLine("\n\tExpecting c4 * x:\t[[20], [25], [30]]");
@@ -222,28 +218,32 @@ namespace MatrixTester
 
         public static void test_matrix_div()
         {
-            Console.WriteLine("\nTesting __div__(A, B) ...\n");
+
+            Console.WriteLine("\nTesting __div__(,) ...\n");
             Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2 }, new double[] { 4, 9 } });
             Matrix B = Matrix.from_list(new List<double[]>() { new double[] { 5, 2 }, new double[] { 1, 1 } });
             Console.WriteLine("\tA: " + A.ToString());
             Console.WriteLine("\tB: " + B.ToString());
 
-            Console.WriteLine("\n\tExpecting 1/A: [[9, -2], [-4, 1]]");
-            Console.WriteLine("\tResult of 1/A: " + (1 / A));
+            Console.WriteLine("\n\tTesting __div__(scalar x, Matrix A) ...\n");
+            Console.WriteLine("\t\tExpecting 1/A: [[9, -2], [-4, 1]]");
+            Console.WriteLine("\t\tResult of 1/A: " + (1 / A));
 
-            Console.WriteLine("\n\tExpecting A/A: [[1, 0], [0, 1]]");
-            Console.WriteLine("\tResult of A/A: " + (A / A));
-            Console.WriteLine("\n\tExpecting A/2: [[0.5, 1], [2, 4.5]]");
-            Console.WriteLine("\tResult of A/2: " + (A / 2));
+            Console.WriteLine("\n\tTesting __div__(Matria A, Matrix A) ...\n");
+            Console.WriteLine("\t\tExpecting A/A: [[1, 0], [0, 1]]");
+            Console.WriteLine("\t\tResult of A/A: " + (A / A));
+
+            Console.WriteLine("\n\tTesting __div__(Matrix A, scalar x) ...\n");
+            Console.WriteLine("\t\tExpecting A/2: [[0.5, 1], [2, 4.5]]");
+            Console.WriteLine("\t\tResult of A/2: " + (A / 2));
 
             A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2, 2 }, new double[] { 4, 4, 2 }, new double[] { 4, 6, 4 } });
             B = Matrix.from_list(new List<double[]>() { new double[] { 3 }, new double[] { 6 }, new double[] { 10 } });
+            Console.WriteLine("\n\n\tA: " + A.ToString());
+            Console.WriteLine("\tB: " + B.ToString());
 
-            Console.WriteLine("\n\tExpecting (1/A)*B: [[-1], [3], [-1]]");
-            Console.WriteLine("\t   Result (1/A)*B: " + ((1/A) * B));
-
-            Console.WriteLine("\n\tExpecting B/A: ");
-            Console.WriteLine("\tResult B/A:\t" + (B/A));
+            Console.WriteLine("\n\t\tExpecting (1/A)*B: [[-1], [3], [-1]]");
+            Console.WriteLine("\t\tResult of (1/A)*B: " + ((1 / A) * B));
         }
 
         public static void test_swap_rows()
@@ -264,18 +264,9 @@ namespace MatrixTester
             
             Console.WriteLine("A: " + A.ToString());
 
-            Console.WriteLine("\n\tExpecting:\t[2, 4, 2, 1, 3, 1, 5, 2, 1, 2, 3, 3, 0, 6, 1, 2");
+            Console.WriteLine("\n\tExpecting:\t[2, 4, 2, 1, 3, 1, 5, 2, 1, 2, 3, 3, 0, 6, 1, 2]");
 
-            string t = "\t   Result:\t[";
-            for (int i = 0; i < list.Count(); i++)
-            {
-                if (i > 0)
-                    t += ", ";
-                t += list[i];
-            }
-            t += "]";
-
-            Console.WriteLine(t);
+            Console.WriteLine("\t   Result:\t[" + string.Join(", ", list) + "]");
         }
 
         public static void test_transpose()
@@ -535,18 +526,23 @@ namespace MatrixTester
 
         public static void test_markowitz()
         {
-            ////Test Markowitz function
-            //List<double[]> listMark = new List<double[]>() { new double[] { 0.04, 0.006, 0.02 }, new double[] { 0.006, 0.09, 0.06 }, new double[] { 0.02, 0.06, 0.16 } };
-            //Matrix cov = Matrix.from_list(listMark);
-            //List<double[]> listMu = new List<double[]>() { new double[] { 0.10 }, new double[] { 0.12 }, new double[] { 0.15 } };
-            //Matrix mu = Matrix.from_list(listMu);
-            //double r_free = 0.05, portfolio_return, portfolio_risk;
-            //double[] portfolio;
-            //Numeric.Markovitz(mu, cov, r_free, out portfolio, out portfolio_return, out portfolio_risk);
+            Console.WriteLine("\nTesting Markovitz(mu, A, r_free)");
+            List<double[]> listMark = new List<double[]>() { new double[] { 0.04, 0.006, 0.02 }, new double[] { 0.006, 0.09, 0.06 }, new double[] { 0.02, 0.06, 0.16 } };
+            Matrix cov = Matrix.from_list(listMark);
+            List<double[]> listMu = new List<double[]>() { new double[] { 0.10 }, new double[] { 0.12 }, new double[] { 0.15 } };
+            Matrix mu = Matrix.from_list(listMu);
+            double r_free = 0.05, portfolio_return, portfolio_risk;
+            double[] portfolio;
 
-            //foreach (double s in portfolio)
-            //    Console.WriteLine(s);
-            //Console.WriteLine("\n" + portfolio_return + "\t" + portfolio_risk);
+            Console.WriteLine("\n\tmu: " + mu.ToString());
+            Console.WriteLine("\tcov: " + cov.ToString());
+            Console.WriteLine("\tr_free: " + r_free.ToString());
+
+            Numeric.Markovitz(mu, cov, r_free, out portfolio, out portfolio_return, out portfolio_risk);
+
+            Console.WriteLine("\n\tExpecting:\tNumeric.Markovitz(mu, cov, r_free, out portfolio, out portfolio_return, out portfolio_risk)");
+            Console.WriteLine("\tResult set:\t x = [" + string.Join(", ", portfolio) + "]");
+            Console.WriteLine("\n\treturn = " + portfolio_return + ", risk = " + portfolio_risk);
         }
 
         public static void test_sqrt()
@@ -592,79 +588,130 @@ namespace MatrixTester
             Console.WriteLine("\t   Result:\t partial(x, 2) = " + f6.partial(x, 2));
         }
 
-            ////test jacobian
-            //MultivariateFunction multi = new MultivariateFunction();
-            //List<MultivariateFunction> fs = new List<MultivariateFunction>() { new MyFunction6(), new MyFunction9() } ;
-            //double[] y = new double[] { 1, 1, 1 };
-            //Console.WriteLine("jacobian(fs, x=[1,1,1]): " + multi.jacobian(fs, y) ); //[[1.9999999..., 7.999999..., 4.9999999...], [1.9999999..., 0.0, 0.0]]
+        public static void test_jacobian()
+        {
+            Console.WriteLine("\nTesting jacobian(fs, x=[1,1,1]) ...\n");
+            MultivariateFunction multi = new MultivariateFunction();
+            List<MultivariateFunction> fs = new List<MultivariateFunction>() { new MyFunction6(), new MyFunction9() } ;
+            double[] x = new double[] { 1, 1, 1 };
 
-            ////test gradient
-            //MyFunction6 f6 = new MyFunction6();
-            //double[] x = new double[] {1, 1, 1};
-            //Console.WriteLine("gradient (f, x=[1, 1, 1]): " + f6.gradient(x) ); //[[1.999999...], [7.999999...], [4.999999...]]
+            Console.WriteLine("\n\tfs =  [ (2.0 * x[0]) + (3.0 * x[1]) + (5.0 * x[1] * x[2]), 2.0 * x[0] ]");
+
+            Console.WriteLine("\n\tExpecting:\tmulti.jacobian(fs, x) = [[1.9999999..., 7.999999..., 4.9999999...], [1.9999999..., 0.0, 0.0]]");
+            Console.WriteLine("\tResult:\t\tmulti.jacobian(fs, x=[1, 1, 1]) = " + multi.jacobian(fs, x) );
+        }
+
+        public static void test_gradient()
+        {
+            Console.WriteLine("\nTesting gradient(x) ...\n");
+            MyFunction6 f6 = new MyFunction6();
+            double[] x = new double[] {1, 1, 1};
+
+            Console.WriteLine("\n\tx = [1, 1, 1]");
+
+            Console.WriteLine("\n\tExpecting:\tgradient(x) = [[1.999999...], [7.999999...], [4.999999...]]" );
+            Console.WriteLine("\tResult:\t\tgradient(x=[1, 1, 1]) = " + f6.gradient(x) );
+        }
+
+        public static void test_hessian()
+        {
+            Console.WriteLine("\nTesting hessian(x) ...\n");
+            MyFunction6 f6 = new MyFunction6();
+            double[] x = new double[] { 1, 1, 1 };
+
+            Console.WriteLine("\n\tx = [1, 1, 1]");
+
+            Console.WriteLine("\n\tExpecting:\thessian(x) = [[0.0, 0.0, 0.0], [0.0, 0.0, 5.000000...], [0.0, 5.000000..., 0.0]]");
+            Console.WriteLine("\tResult:\t\thessian(x=[1, 1, 1]) = " + f6.hessian(x));   
+        }
+
+        public static void test_solve_newton_multi()
+        {
+            Console.WriteLine("\nTesting solve_newton_multi(fs, x) ...\n");
+            MultivariateFunction multi = new MultivariateFunction();
+            List<MultivariateFunction> fs = new List<MultivariateFunction>() { new MyFunction7(), new MyFunction8() };
+            double[] x = new double[] { 1, 1 };
             
-            ////test hessian
-            //MyFunction6 f6 = new MyFunction6();
-            //double[] x = new double[] { 1, 1, 1 };
-            //Console.WriteLine("hessian (f, x=[1, 1, 1]): " + f6.hessian(x) ); //[[0.0, 0.0, 0.0], [0.0, 0.0, 5.000000...], [0.0, 5.000000..., 0.0]]
+            Console.WriteLine("\n\tfs =  [ x[0] * x[1] - 2, x[0] - 3.0 * x[1] * x[1] ]");
 
-            ////test solve_newton_multi
-            //MultivariateFunction multi = new MultivariateFunction();
-            //List<MultivariateFunction> fs1 = new List<MultivariateFunction>() { new MyFunction7(), new MyFunction8() };
-            //double[] x = new double[] { 1, 1 };
-            //double[] result = multi.solve_newton_multi(fs1, x);
-            //Console.WriteLine("solve_newton_multi(fs, x=[1, 1]: [" + result[0] + ", " + result[1] + "]"); //[2.2894284851066793, 0.87358046473632422]
+            Console.WriteLine("\n\tExpecting:\tsolve_newton_multi(fs, x=[1, 1]) = [2.2894284851066793, 0.87358046473632422]" );
+            double[] result = multi.solve_newton_multi(fs, x);
+            Console.WriteLine("\tResult:\t\tsolve_newton_multi(fs, x=[1, 1]) =  [" + result[0] + ", " + result[1] + "]");
 
-            //List<MultivariateFunction> fs2 = new List<MultivariateFunction>() { new MyFunction10(), new MyFunction11() };
-            //double[] y = new double[] { 0, 0 };
-            //double[] result2 = multi.solve_newton_multi(fs2, y);
-            //Console.WriteLine("solve_newton_multi(fs2, x=[0, 0]: [" + result2[0] + ", " + result2[1] + "]");//[1.0000000006984919, -1.0000000006984919]
-            //y = new double[] { 1, 1 };
-            //result2 = multi.solve_newton_multi(fs2, y);
-            //Console.WriteLine("solve_newton_multi(fs2, x=[1, 1]: [" + result2[0] + ", " + result2[1] + "]");//[-2.0000000006984919, 2.0000000006984919]     
+            fs = new List<MultivariateFunction>() { new MyFunction10(), new MyFunction11() };
+            x = new double[] { 0, 0 };
+            Console.WriteLine("\n\tfs =  [ x[0] + x[1], x[0] + (x[1] * x[1]) - 2 ]");
 
-            //test optimize_newton_multi
-            //MyFunction12 f12 = new MyFunction12();
-            //double[] x = new double[] { 0, 0 };
-            //double[] result = f12.optimize_newton_multi(x);
-            //Console.WriteLine("optimize_newton_multi(fs, x=[0, 0]: [" + result[0] + ", " + result[1] + "]"); //[2.0, 3.0] maximum
+            Console.WriteLine("\n\tExpecting:\tsolve_newton_multi(fs, x=[0, 0]) = [1.0000000006984919, -1.0000000006984919]");
+            result = multi.solve_newton_multi(fs, x);
+            Console.WriteLine("\tResult:\t\tsolve_newton_multi(fs, x=[0, 0]) =  [" + result[0] + ", " + result[1] + "]");
+        }
 
-            //MyFunction13 f13 = new MyFunction13();
-            //double[] y = new double[] { 0, 0 };
-            //double[] result2 = f13.optimize_newton_multi(y);
-            //Console.WriteLine("optimize_newton_multi(fs, x=[0, 0]: [" + result2[0] + ", " + result2[1] + "]"); //[2.0, 3.0] minimum
+        public static void test_optimize_newton_multi()
+        {
+            Console.WriteLine("\nTesting test_optimize_newton_multi(x) ...\n");
+            MyFunction12 f12 = new MyFunction12();
+            double[] x = new double[] { 0, 0 };
 
-            //TEST fit_least_squares
-            //  Expecting:
-            //   90 2507.89 2506.98
-            //   91 2562.21 2562.08
-            //   92 2617.02 2617.78
-            //   93 2673.15 2674.08
-            //   94 2730.75 2730.98
-            //   95 2789.18 2788.48
-            //   96 2847.58 2846.58
-            //   97 2905.68 2905.28
-            //   98 2964.03 2964.58
-            //   99 3023.5 3024.48
-            //double[,] points = new double[100, 3];
-            //Function[] f = new Function[3] { new Quadratic0(), new Quadratic1(), new Quadratic2() } ;
-            //double[] fitting_coef;
-            //double chi2;
-            //Function fitting_f;
-             
-            //for (int i = 0; i < 100; i++)
-            //{
-            //    points[i, 0] = i;
-            //    points[i, 1] = 5 + 0.8*i + 0.3*i*i + Math.Sin(i);
-            //    points[i, 2] = 2;
-            //}
+            Console.WriteLine("\n\tf(x[]) =  -1.0 * ( Math.Pow(x[0] - 2, 2) + Math.Pow(x[1] - 3, 2) )");
 
-            //Function.fit_least_squares(points, f, out fitting_coef, out chi2, out fitting_f);
+            Console.WriteLine("\n\tExpecting:\toptimize_newton_multi(x=[0, 0]) = [2.0, 3.0] maximum" );
+            double[] result = f12.optimize_newton_multi(x);
+            Console.WriteLine("\tResult:\t\toptimize_newton_multi(x=[0, 0]) = [" + result[0] + ", " + result[1] + "]");
 
-            //for (int i = 90; i < 100; i++)
-            //    Console.WriteLine(points[i, 0] + "\t" + Math.Round(points[i, 1], 2) + "\t" + Math.Round(fitting_f.eval_fitting_function(points[i, 0]), 2));
+            MyFunction13 f13 = new MyFunction13();
+            Console.WriteLine("\n\tf(x[]) =  Math.Pow(x[0] - 2, 2) + Math.Pow(x[1] - 3, 2)");
 
+            Console.WriteLine("\n\tExpecting:\toptimize_newton_multi(x=[0, 0]) = [2.0, 3.0] minimum");
+            result = f13.optimize_newton_multi(x);
+            Console.WriteLine("\tResult:\t\toptimize_newton_multi(x=[0, 0]) = [" + result[0] + ", " + result[1] + "]");
+        }
 
+        public static void fit_least_squares()
+        {
+            Console.WriteLine("\nTesting fit_least_squares(points, f, out fitting_coef, out chi2, out fitting_f) ...\n");
+            
+            double[,] points = new double[100, 3];
+            Function[] f = new Function[3] { new Quadratic0(), new Quadratic1(), new Quadratic2() } ;
+            double[] fitting_coef;
+            double chi2;
+            Function fitting_f;
+            
+            for (int i = 0; i < 100; i++)
+            {
+                points[i, 0] = i;
+                points[i, 1] = 5 + 0.8*i + 0.3*i*i + Math.Sin(i);
+                points[i, 2] = 2;
+            }
+
+            Console.WriteLine("\tdouble[,] points = new double[100, 3]");
+            Console.WriteLine("\tPopulate points[,] ...");
+            Console.WriteLine("\t\tfor (int i = 0; i < 100; i++)");
+            Console.WriteLine("\t\t{");
+            Console.WriteLine("\t\tpoints[i, 0] = i;");
+            Console.WriteLine("\t\tpoints[i, 1] = 5 + 0.8*i + 0.3*i*i + Math.Sin(i);");
+            Console.WriteLine("\t\tpoints[i, 2] = 2;");
+            Console.WriteLine("\t\t}");
+
+            Console.WriteLine("\tf= [ Math.Pow(x, 0), Math.Pow(x, 1), Math.Pow(x, 2) ]" );
+
+            Function.fit_least_squares(points, f, out fitting_coef, out chi2, out fitting_f);
+            Console.WriteLine("\n\tExpecting:\tfit_least_squares(points, f, out fitting_coef, out chi2, out fitting_f) = "); 
+            Console.WriteLine("\t\t90  2507.89\t2506.98");
+            Console.WriteLine("\t\t91  2562.21\t2562.08");
+            Console.WriteLine("\t\t92  2617.02\t2617.78");
+            Console.WriteLine("\t\t93  2673.15\t2674.08");
+            Console.WriteLine("\t\t94  2730.75\t2730.98");
+            Console.WriteLine("\t\t95  2789.18\t2788.48");
+            Console.WriteLine("\t\t96  2847.58\t2846.58");
+            Console.WriteLine("\t\t97  2905.68\t2905.28");
+            Console.WriteLine("\t\t98  2964.03\t2964.58");
+            Console.WriteLine("\t\t99  3023.5 \t3024.48");
+
+            Console.WriteLine("\tResult:\t\tfit_least_squares(points, f, out fitting_coef, out chi2, out fitting_f) = ");
+            for (int i = 90; i < 100; i++)
+                Console.WriteLine("\t\t" + points[i, 0] + "  " + Math.Round(points[i, 1], 2) + "\t" + Math.Round(fitting_f.eval_fitting_function(points[i, 0]), 2));
+        }
     }
 
 
@@ -1143,7 +1190,4 @@ namespace MatrixTester
             //    Console.WriteLine(points[i, 0] + "\t" + Math.Round(points[i, 1], 2) + "\t" + Math.Round(fitting_f.eval_fitting_function(points[i, 0]), 2));
 
     */
-
-
-
 }
