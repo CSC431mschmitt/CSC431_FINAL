@@ -386,24 +386,27 @@ namespace MatrixTester
         public static void test_norm()
         {
             Console.WriteLine("\nTesting norm(List<double>x, p=1) ...\n");
-            
-            List<double[]> list1 = new List<double[]>() { new double[] { 2 }, new double[] { 3 }, new double[] { 4 } };
-            List<double[]> list0 = new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 }, new double[] { 7, 8, 9 } };
-            List<double> list2 = new List<double>( new double[] { 2, 3, 4 } );
-            List<double[]> list3 = new List<double[]>() { new double[] { 2, 3, 4 } };
-            Matrix A = Matrix.from_list(list3);
+
+            List<double> list = new List<double>(new double[] { 2, 3, 4 });
+            Matrix A = Matrix.from_list(new List<double[]>() { new double[] { 1, 2, 3 }, new double[] { 4, 5, 6 }, new double[] { 7, 8, 9 } });
+
             try
             {
-                //Console.WriteLine(Matrix.from_list(list1));
-                //Console.WriteLine(Matrix.from_list(list3));
                 Console.WriteLine("\n\tlist = [2, 3, 4]");
-                Console.WriteLine("\n\tExpecting t1-norm of list = 9");
-                Console.WriteLine("\t   Result t1-norm of list = " + Numeric.norm(list2, 1));
-                //EXCEPTION: Console.WriteLine("2-norm of Matrix " + Matrix.from_list(list0) + ": " + Numeric.norm(Matrix.from_list(list0), 2));
+                Console.WriteLine("\n\tExpecting: \t1-norm of list = 9");
+                Console.WriteLine("\t   Result: \t1-norm of list = " + Numeric.norm(list, 1));
+
+                Console.WriteLine("\n\tA = [[1, 2, 3], [4, 5, 6],  [7, 8, 9]]");
+                Console.WriteLine("\n\tExpecting: \t1-norm of Matrix A = 18");
+                Console.WriteLine("\t   Result: \t1-norm of Matrix " + A.ToString() + ": " + Numeric.norm(A, 1));
+
+                Console.WriteLine("\n\tExpecting: \t2-norm of Matrix " + A.ToString() + ": EXCEPTION");
+                Numeric.norm(A, 2);
             }
             catch (Exception e)
             {
-                Console.WriteLine("{0} Exception caught.", e.ToString());
+                Console.WriteLine("\t   Result:");
+                Console.WriteLine("\t\t{0} Exception caught.", e.ToString());
             }
         }
 
