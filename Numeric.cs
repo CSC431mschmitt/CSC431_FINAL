@@ -214,11 +214,12 @@ namespace MatrixLib
             return null;
         }
 
-        public double[] optimize_newton_multi(double[] x, double ap = 0.000001, double rp = 0.0001, int ns = 20)
+        public double[] optimize_newton_multi(double[] x, ref string min_max, double ap = 0.000001, double rp = 0.0001, int ns = 20)
         /* Function:    solve_secant
          * Purpose:     Finds extreme of multidimensional function fs near point x 
          * Parameters:  fs - Multidimensional function that takes an array and returns scalar
          *              x - Array
+         *              min_max - Indicates if solution is a maximum or minimum
          *              ap - Absolute precision
          *              rp - Relative precision
          *              ns - Max number of iterations
@@ -258,10 +259,12 @@ namespace MatrixLib
                             if (numeric.Cholesky(H) == null)
                             {
                                 if (numeric.Cholesky(-H) != null)
-                                    Console.WriteLine("maximum");
+                                    min_max = "MAXIMUM";
+                                    //Console.WriteLine("MAXIMUM");
                             }
                             else
-                                Console.WriteLine("minimum");
+                                min_max = "MINIMUM";
+                                //Console.WriteLine("MINIMUM");
                         }
                         catch (Exception ex) 
                         {
@@ -1115,8 +1118,9 @@ namespace MatrixLib
                     if (L[k, k] <= 0)
                         throw new ArithmeticException("Matrix is not Positive Definite");
 
-                    p = L[k, k];
                     L[k, k] = Math.Sqrt(L[k, k]);
+                    p = L[k, k];
+                    
                     for (int i = k + 1; i < L.rows; i++)
                     {
                         L[i, k] /= p;
