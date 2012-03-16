@@ -396,6 +396,9 @@ namespace MatrixTester
                 Console.WriteLine("\n\tExpecting: \t1-norm of list = 9");
                 Console.WriteLine("\t   Result: \t1-norm of list = " + Numeric.norm(list, 1));
 
+                Console.WriteLine("\n\tExpecting: \t2-norm of list = 5.385164807");
+                Console.WriteLine("\t   Result: \t2-norm of list = " + Numeric.norm(list, 2));
+
                 Console.WriteLine("\n\tA = [[1, 2, 3], [4, 5, 6],  [7, 8, 9]]");
                 Console.WriteLine("\n\tExpecting: \t1-norm of Matrix A = 18");
                 Console.WriteLine("\t   Result: \t1-norm of Matrix " + A.ToString() + ": " + Numeric.norm(A, 1));
